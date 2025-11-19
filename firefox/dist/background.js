@@ -53,12 +53,9 @@ chrome.notifications.onButtonClicked.addListener(function (notificationId, butto
     chrome.notifications.clear(notificationId);
 });
 chrome.runtime.onInstalled.addListener((details) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
     if (details.reason === "install") {
         yield setInitialValues();
-        yield new Promise(resolve => setTimeout(resolve, 1000));
-        (_c = (_b = browser.runtime).setUninstallURL) === null || _c === void 0 ? void 0 : _c.call(_b, `https://svitspindler.com/uninstall?extension=${encodeURIComponent("Prolific Tool Firefox")}`);
-        yield chrome.tabs.create({ url: "https://svitspindler.com/prolific-studies-notifier", active: true });
+        // Extension installed - no external page opened
     }
     else if (details.reason === "update") {
         const result = yield chrome.storage.sync.get([CURRENT_STUDIES]);

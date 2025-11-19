@@ -54,8 +54,7 @@ chrome.notifications.onButtonClicked.addListener(function (notificationId, butto
 chrome.runtime.onInstalled.addListener((details) => __awaiter(void 0, void 0, void 0, function* () {
     if (details.reason === "install") {
         yield setInitialValues();
-        yield new Promise(resolve => setTimeout(resolve, 1000));
-        yield chrome.tabs.create({ url: "https://svitspindler.com/prolific-studies-notifier", active: true });
+        // Extension installed - no external page opened
         chrome.runtime.setUninstallURL(`https://svitspindler.com/uninstall?extension=${encodeURI("Prolific Tool")}`);
     }
     else if (details.reason === "update") {
