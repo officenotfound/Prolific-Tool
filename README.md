@@ -2,7 +2,7 @@
 
 # 🎯 Prolific Tool
 
-### Enhanced Study Notifications & Dark Mode for Prolific
+### Enhanced Study Notifications, Multi-Language Support & Dark Mode for Prolific
 
 [![GitHub Stars](https://img.shields.io/github/stars/officenotfound/ProlificTool?style=for-the-badge&logo=github)](https://github.com/officenotfound/ProlificTool)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
@@ -24,10 +24,14 @@
 This project is a fork and enhancement of the original [Prolific Studies Notifier](https://github.com/spin311/ProlificAutomaticStudies) created by [spin311](https://github.com/spin311). 
 
 **Major enhancements in this version:**
-- 🌙 Dark Mode for Prolific website
+- 🌐 Multi-language support (5 languages with full accessibility)
+- 🌙 Dual dark modes (website + extension popup)
+- 💰 Currency conversion (GBP → USD)
+- 🎯 Advanced study filters (minimum pay, researcher whitelist)
+- 📊 Study history tracking
 - ⚙️ Opt-in auto-refresh (disabled by default)
 - 🎨 Redesigned Material Design UI
-- 📊 Enhanced study management features
+- ♿ Accessibility-first design (keyboard navigation, screen readers)
 - 📝 Comprehensive documentation
 
 Thank you to spin311 for creating the foundation that made this tool possible!
@@ -36,11 +40,41 @@ Thank you to spin311 for creating the foundation that made this tool possible!
 
 ## ✨ Features
 
-### 🌙 **Dark Mode**
-- Beautiful dark theme for the Prolific website
-- Easy toggle from extension popup
+### 🌐 **Multi-Language Support** (NEW!)
+- **5 Languages**: English 🇺🇸, German 🇩🇪, Spanish 🇪🇸, French 🇫🇷, Portuguese 🇵🇹
+- Beautiful flag-based language switcher
+- Full keyboard navigation (Arrow keys, Tab, Enter, Space)
+- Screen reader support with ARIA labels
+- Automatic language persistence
+- Covers top Prolific participant countries
+
+### 🌙 **Dual Dark Modes** (NEW!)
+- **Website Dark Mode**: Beautiful dark theme for Prolific website
+- **Extension Dark Mode**: Separate dark theme for popup interface
+- Both modes work independently
+- WCAG AA compliant contrast ratios
 - Reduces eye strain during late-night study sessions
 - Persistent across browser sessions
+
+### 💰 **Currency Conversion** (NEW!)
+- All amounts displayed in USD ($)
+- Automatic GBP → USD conversion (1 GBP ≈ 1.27 USD)
+- Consistent currency display throughout extension
+- Updated filter labels and study cards
+
+### 🎯 **Advanced Study Filters** (NEW!)
+- **Minimum Pay Filter**: Set your minimum acceptable pay in USD
+- **Hide Under $1**: Quick toggle to hide low-paying studies
+- **Researcher Whitelist**: Only show studies from favorite researchers
+- Passive filtering (TOS compliant - no automation)
+
+### 📊 **Study History & Tracking** (NEW!)
+- Automatic logging of all seen studies
+- Track first seen, last seen timestamps
+- Manual "Mark as Completed" functionality
+- Completion status tracking
+- History stored locally (500 study limit)
+- Duplicate prevention option
 
 ### ⚙️ **Smart Auto-Refresh**
 - **Opt-in design** - Auto-refresh is disabled by default
@@ -54,18 +88,20 @@ Thank you to spin311 for creating the foundation that made this tool possible!
 - Desktop notifications with study details
 - Auto-focus Prolific tab when studies appear (optional)
 
-### 📊 **Study Management**
-- View all available studies in one place
-- Search and filter by title or researcher
-- Sort by pay rate, time, or creation date
-- Track total earnings potential
-- Download study data as CSV
+### ♿ **Accessibility Features** (NEW!)
+- Full keyboard navigation throughout
+- Screen reader support (NVDA, JAWS, VoiceOver)
+- ARIA labels and live regions
+- High contrast mode support
+- Reduced motion support
+- Focus indicators for all interactive elements
 
 ### 🎨 **Modern Interface**
 - Clean Material Design UI
 - Intuitive settings management
-- Built-in FAQ section
+- Built-in FAQ section (updated for 2024/2025)
 - Fast and responsive
+- Professional branding
 
 ---
 
