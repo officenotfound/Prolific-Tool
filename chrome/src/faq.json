@@ -1,0 +1,34 @@
+[
+  {
+    "question": "What is Prolific?",
+    "answer": "Prolific is a service that connects researchers with participants. Researchers pay Prolific, and Prolific pays you for your contributions to studies."
+  },
+  {
+    "question": "How do I get started?",
+    "answer": "Register, verify your identity, take 'Your first study', and fill out your demographics in the 'About You' section. You may be placed on a waiting list initially."
+  },
+  {
+    "question": "Why do I see no studies?",
+    "answer": "Study availability depends on your demographics and researcher needs. Prolific also uses 'adaptive rate limiting' to prioritize users who haven't taken studies recently. If you are new or returning after a break, you might see more studies."
+  },
+  {
+    "question": "What does 'Multiple submissions allowed' mean?",
+    "answer": "This means you can take the study more than once if spots are available. It works like batch jobs on other platforms."
+  },
+  {
+    "question": "Why do I see studies with 1 spot that are full?",
+    "answer": "These are often studies where a participant returned their submission or timed out. The spot becomes available briefly and is quickly taken by another user."
+  },
+  {
+    "question": "When is the best time to find studies?",
+    "answer": "Studies are posted throughout the day, but often during business hours in the researcher's time zone (UK/US). There is no single 'best' time."
+  },
+  {
+    "question": "How do I get paid?",
+    "answer": "Prolific pays via PayPal. You can cash out once you reach £5. After 4 successful cashouts to the same PayPal account, you gain access to instant cashouts."
+  },
+  {
+    "question": "Is my data safe?",
+    "answer": "Yes. Prolific verifies identity via a third party (Onfido) and researchers only see your anonymous Prolific ID and demographic data, not your personal identity."
+  }
+]

@@ -1,0 +1,110 @@
+/* Prolific Dark Mode */
+
+:root {
+    --dm-bg-primary: #121212;
+    --dm-bg-secondary: #1e1e1e;
+    --dm-bg-tertiary: #2c2c2c;
+    --dm-text-primary: #e0e0e0;
+    --dm-text-secondary: #a0a0a0;
+    --dm-accent: #007bff;
+    /* Keep prolific blue but maybe adjust */
+    --dm-border: #444;
+}
+
+body.prolific-dark-mode {
+    background-color: var(--dm-bg-primary) !important;
+    color: var(--dm-text-primary) !important;
+}
+
+/* General container backgrounds */
+body.prolific-dark-mode .container,
+body.prolific-dark-mode .content,
+body.prolific-dark-mode .main-content,
+body.prolific-dark-mode #app {
+    background-color: var(--dm-bg-primary) !important;
+}
+
+/* Cards and List Items */
+body.prolific-dark-mode .card,
+body.prolific-dark-mode .list-item,
+body.prolific-dark-mode li[class*='list-item'],
+body.prolific-dark-mode div[class*='card'] {
+    background-color: var(--dm-bg-secondary) !important;
+    color: var(--dm-text-primary) !important;
+    border-color: var(--dm-border) !important;
+}
+
+/* Headers and Titles */
+body.prolific-dark-mode h1,
+body.prolific-dark-mode h2,
+body.prolific-dark-mode h3,
+body.prolific-dark-mode h4,
+body.prolific-dark-mode h5,
+body.prolific-dark-mode h6,
+body.prolific-dark-mode .title,
+body.prolific-dark-mode [data-testid="title"] {
+    color: var(--dm-text-primary) !important;
+}
+
+/* Text and Descriptions */
+body.prolific-dark-mode p,
+body.prolific-dark-mode span,
+body.prolific-dark-mode div,
+body.prolific-dark-mode .description,
+body.prolific-dark-mode [data-testid="description"] {
+    color: var(--dm-text-primary);
+}
+
+body.prolific-dark-mode .text-muted,
+body.prolific-dark-mode .secondary-text {
+    color: var(--dm-text-secondary) !important;
+}
+
+/* Links */
+body.prolific-dark-mode a {
+    color: #64b5f6 !important;
+}
+
+/* Inputs and Forms */
+body.prolific-dark-mode input,
+body.prolific-dark-mode select,
+body.prolific-dark-mode textarea {
+    background-color: var(--dm-bg-tertiary) !important;
+    color: var(--dm-text-primary) !important;
+    border: 1px solid var(--dm-border) !important;
+}
+
+/* Specific Prolific Elements */
+body.prolific-dark-mode div[data-testid="studies-list"] {
+    background-color: transparent !important;
+}
+
+/* Header/Nav */
+body.prolific-dark-mode header,
+body.prolific-dark-mode nav,
+body.prolific-dark-mode .navbar {
+    background-color: var(--dm-bg-secondary) !important;
+    border-bottom: 1px solid var(--dm-border) !important;
+}
+
+/* Sidebar if exists */
+body.prolific-dark-mode .sidebar,
+body.prolific-dark-mode aside {
+    background-color: var(--dm-bg-secondary) !important;
+    border-right: 1px solid var(--dm-border) !important;
+}
+
+/* Dialogs/Modals */
+body.prolific-dark-mode .modal,
+body.prolific-dark-mode .dialog,
+body.prolific-dark-mode div[role="dialog"] {
+    background-color: var(--dm-bg-secondary) !important;
+    color: var(--dm-text-primary) !important;
+}
+
+/* Fix for potential white backgrounds on specific elements */
+body.prolific-dark-mode [style*="background-color: white"],
+body.prolific-dark-mode [style*="background-color: #fff"],
+body.prolific-dark-mode [style*="background-color: #ffffff"] {
+    background-color: var(--dm-bg-secondary) !important;
+}

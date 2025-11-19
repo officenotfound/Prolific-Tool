@@ -1,0 +1,49 @@
+{
+  "manifest_version": 2,
+  "name": "Prolific Tool",
+  "version": "3.5.0",
+  "description": "Firefox extension for Prolific to notify you when studies are available",
+  "permissions": [
+    "storage",
+    "notifications",
+    "tabs",
+    "https://app.prolific.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://app.prolific.com/*"
+      ],
+      "js": [
+        "dist/content.js"
+      ],
+      "css": [
+        "styles/dark_mode.css"
+      ]
+    }
+  ],
+  "background": {
+    "scripts": [
+      "dist/background.js"
+    ],
+    "persistent": true
+  },
+  "browser_action": {
+    "default_popup": "popup/popup.html",
+    "default_title": "Prolific Tool"
+  },
+  "icons": {
+    "16": "imgs/logo.png",
+    "48": "imgs/logo.png",
+    "128": "imgs/logo.png"
+  },
+  "applications": {
+    "gecko": {
+      "id": "prolific_studies_notifier@example.com",
+      "strict_min_version": "91.0"
+    }
+  },
+  "web_accessible_resources": [
+    "styles/dark_mode.css"
+  ]
+}

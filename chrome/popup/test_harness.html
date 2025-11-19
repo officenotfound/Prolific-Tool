@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Prolific Notifier Test Harness</title>
+    <link href="../styles/material.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            width: 400px;
+            height: 600px;
+            border: 1px solid #ccc;
+            margin: 20px auto;
+        }
+    </style>
+    <script>
+        // Mock Chrome API
+        const mockStorage = {
+            refreshRate: 60,
+            minPayRate: 0,
+            audio: 'alert1.mp3',
+            volume: 100,
+            showNotification: true,
+            audioActive: true,
+            focusProlific: false,
+            currentStudies: [
+                {
+                    id: 'test1',
+                    title: 'Test Study 1',
+                    researcher: 'Researcher A',
+                    reward: '£1.50',
+                    rewardPerHour: '£9.00/hr',
+                    time: '10 min'
+                },
+                {
+                    id: 'test2',
+                    title: 'High Pay Study',
+                    researcher: 'Researcher B',
+                    reward: '£5.00',
+                    rewardPerHour: '£15.00/hr',
+                    time: '20 min'
+                }
+            ]
+        };
+
+        window.chrome = {
+            storage: {
+                sync: {
+                    get: (keys, cb) => {
+                        const result = {};
+                        if (Array.isArray(keys)) {
+                            keys.forEach(k => result[k] = mockStorage[k]);
+                        } else if (typeof keys === 'string') {
+                            result[keys] = mockStorage[keys];
+                        }
+                        if (cb) cb(result);
+                        return Promise.resolve(result);
+                    },
+                    set: (items, cb) => {
+                        Object.assign(mockStorage, items);
+                        console.log('Storage Sync Set:', items);
+                        if (cb) cb();
+                        return Promise.resolve();
+                    }
+                },
+                local: {
+                    get: (keys, cb) => {
+                        const result = {};
+                        if (keys === 'currentStudies') {
+                            result.currentStudies = mockStorage.currentStudies;
+                        }
+                        if (cb) cb(result);
+                        return Promise.resolve(result);
+                    },
+                    set: (items, cb) => {
+                        if (items.currentStudies) mockStorage.currentStudies = items.currentStudies;
+                        console.log('Storage Local Set:', items);
+                        if (cb) cb();
+                        return Promise.resolve();
+                    }
+                }
+            },
+            action: {
+                setBadgeText: ({ text }) => console.log('Set Badge Text:', text),
+                setBadgeBackgroundColor: ({ color }) => console.log('Set Badge Color:', color)
+            },
+            runtime: {
+                sendMessage: (msg) => console.log('Runtime Message:', msg),
+                getURL: (path) => path
+            }
+        };
+    </script>
+</head>
+
+<body>
+
+    <div class="app-bar">
+        <div class="app-title">
+            <img src="../imgs/logo.png" alt="Logo" class="app-logo">
+            Prolific Notifier
+        </div>
+        <div id="earnings-summary" class="stat-value" style="font-size: 14px; color: white;">£0.00</div>
+    </div>
+
+    <div class="nav-tabs">
+        <div class="nav-tab active" data-tab="studies">Studies</div>
+        <div class="nav-tab" data-tab="settings">Settings</div>
+        <div class="nav-tab" data-tab="faq">FAQ</div>
+        <div class="nav-tab" data-tab="support">Support</div>
+    </div>
+
+    <div class="content">
+        <!-- Studies Tab -->
+        <div id="studies" class="tab-pane active">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-value" id="studies-count">0</span>
+                    <span class="stat-label">Available</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="total-earnings">£0.00</span>
+                    <span class="stat-label">Potential</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="search-studies" class="form-control" placeholder="Search studies...">
+            </div>
+
+            <div id="studies-container">
+                <!-- Studies will be injected here -->
+                <div class="empty-state">
+                    <div class="empty-icon">📭</div>
+                    <div>No studies available right now.</div>
+                    <div style="font-size: 12px; margin-top: 8px;">Auto-refresh is active.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-pane">
+            <div class="card">
+                <div class="form-group">
+                    <label class="form-label">Refresh Interval (seconds)</label>
+                    <input type="number" id="refreshRate" class="form-control" min="60" value="60">
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">Minimum 60 seconds recommended to
+                        avoid rate limiting.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Minimum Pay Rate (£/hr)</label>
+                    <input type="number" id="minPayRate" class="form-control" min="0" step="0.5" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notification Sound</label>
+                    <select id="selectAudio" class="form-control">
+                        <option value="alert1.mp3">Alert 1</option>
+                        <option value="alert2.mp3">Alert 2</option>
+                        <option value="alert3.mp3">Alert 3</option>
+                    </select>
+                    <button id="playAudio" class="btn btn-text" style="margin-top: 8px;">Test Sound</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Volume</label>
+                    <input type="range" id="volume" min="0" max="100" style="width: 100%;">
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="showNotification"> Show Notifications
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="audioActive"> Play Sound
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="focusProlific"> Focus Tab on New Study
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Tab -->
+        <div id="faq" class="tab-pane">
+            <div id="faq-container">
+                <!-- FAQ items will be injected here -->
+            </div>
+        </div>
+
+        <!-- Support Tab -->
+        <div id="support" class="tab-pane">
+            <div class="support-section">
+                <h3>Enjoying the extension?</h3>
+                <p style="color: #5f6368; margin-bottom: 24px;">Your support helps me keep this tool free and updated.
+                </p>
+
+                <a href="https://buymeacoffee.com/404officenotfound" target="_blank" class="coffee-btn">
+                    <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee">
+                    Buy me a coffee
+                </a>
+
+                <div style="margin-top: 24px;">
+                    <a href="https://chromewebstore.google.com/detail/prolific-studies-notifier/..." target="_blank"
+                        class="btn btn-text">Rate on Chrome Web Store</a>
+                </div>
+
+                <div style="margin-top: 32px; border-top: 1px solid #dadce0; padding-top: 16px;">
+                    <p style="font-size: 12px; color: #9aa0a6;">Version 3.2.0</p>
+                    <a href="https://github.com/spin311/ProlificAutomaticStudies" target="_blank" class="btn btn-text"
+                        style="font-size: 12px;">GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../dist/popup.js"></script>
+</body>
+
+</html>

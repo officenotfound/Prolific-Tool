@@ -1,0 +1,278 @@
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+const AUDIO_ACTIVE = "audioActive";
+const SHOW_NOTIFICATION = "showNotification";
+const OPEN_PROLIFIC = "openProlific";
+const AUDIO = "audio";
+const VOLUME = "volume";
+const COUNTER = "counter";
+const FOCUS_PROLIFIC = "focusProlific";
+const ACTIVE_TAB = "activeTab";
+const ICON_URL = 'imgs/logo.png';
+const TITLE = 'Prolific Automatic Studies';
+const MESSAGE = 'A new study is available on Prolific!';
+const USE_OLD = "useOld";
+const PROLIFIC_TITLE = "prolificTitle";
+const TRACK_IDS = "trackIds";
+const STUDY_HISTORY_LEN = "studyHistoryLen";
+const SORT_STUDIES = 'sortStudies';
+const REFRESH_RATE = 'refreshRate';
+const CURRENT_STUDIES = 'currentStudies';
+initialize();
+chrome.runtime.onMessage.addListener(handleMessages);
+chrome.notifications.onClicked.addListener(function (notificationId) {
+    if (!!notificationId && notificationId !== 'rate-extension') {
+        chrome.tabs.create({ url: `https://app.prolific.com/studies/${notificationId}`, active: true });
+    } else if (notificationId !== 'rate-extension') {
+        chrome.tabs.create({ url: "https://app.prolific.com/", active: true });
+    }
+    chrome.notifications.clear(notificationId);
+});
+chrome.notifications.onButtonClicked.addListener(function (notificationId, buttonIndex) {
+    if (notificationId === 'rate-extension') {
+        if (buttonIndex === 0) {
+            chrome.tabs.create({ url: "https://buymeacoffee.com/404officenotfound", active: true });
+        }
+        chrome.notifications.clear(notificationId);
+    } else if (buttonIndex === 0) {
+        if (!!notificationId) {
+            chrome.tabs.create({ url: `https://app.prolific.com/studies/${notificationId}`, active: true });
+        }
+        else {
+            chrome.tabs.create({ url: "https://app.prolific.com/", active: true });
+        }
+    }
+    chrome.notifications.clear(notificationId);
+});
+chrome.runtime.onInstalled.addListener((details) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c;
+    if (details.reason === "install") {
+        yield setInitialValues();
+        yield new Promise(resolve => setTimeout(resolve, 1000));
+        (_c = (_b = browser.runtime).setUninstallURL) === null || _c === void 0 ? void 0 : _c.call(_b, `https://svitspindler.com/uninstall?extension=${encodeURIComponent("Prolific Tool Firefox")}`);
+        yield chrome.tabs.create({ url: "https://svitspindler.com/prolific-studies-notifier", active: true });
+    }
+    else if (details.reason === "update") {
+        const result = yield chrome.storage.sync.get([CURRENT_STUDIES]);
+        const prevStudies = result[CURRENT_STUDIES];
+        yield chrome.storage.local.set({ [CURRENT_STUDIES]: (prevStudies !== null && prevStudies !== void 0 ? prevStudies : []) });
+        yield chrome.storage.sync.set({
+            [REFRESH_RATE]: 0
+        });
+        yield chrome.browserAction.setBadgeText({ text: "New" });
+    }
+}));
+function getValueFromStorage(key, defaultValue) {
+    return new Promise((resolve) => {
+        chrome.storage.sync.get(key, function (result) {
+            resolve((result[key] !== undefined) ? result[key] : defaultValue);
+        });
+    });
+}
+function focusProlific() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const tabs = yield chrome.tabs.query({ url: "*://app.prolific.com/*" });
+        if (tabs.length > 0) {
+            yield chrome.tabs.update(tabs[0].id, { active: true });
+        }
+        else {
+            yield chrome.tabs.create({ url: "https://app.prolific.com/", active: true });
+        }
+    });
+}
+function handlePlaySound() {
+    return __awaiter(this, arguments, void 0, function* (audio = null, volume = null) {
+        var _a;
+        if (!audio || !volume) {
+            const audioValues = yield chrome.storage.sync.get([AUDIO, VOLUME]);
+            audio = (_a = audioValues[AUDIO]) !== null && _a !== void 0 ? _a : 'alert1.mp3';
+            volume = audioValues[VOLUME] ? audioValues[VOLUME] / 100 : 100;
+        }
+        yield playAudio(audio, volume);
+    });
+}
+function handleMessages(message) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Return early if this message isn't meant for the offscreen document.
+        if (message.target !== 'background') {
+            return Promise.resolve();
+        }
+        // Dispatch the message to an appropriate handler.
+        switch (message.type) {
+            case 'play-sound':
+                const audioData = message.data || {};
+                yield handlePlaySound(audioData.audio, audioData.volume);
+                if (!message.data)
+                    sendNotification();
+                break;
+            case 'show-notification':
+                sendNotification();
+                break;
+            case 'new-studies':
+                yield handleNewStudies(message.data);
+                break;
+            case 'resetValues':
+                yield setInitialValues();
+                break;
+        }
+    });
+}
+function handleNewStudies(studies) {
+    return __awaiter(this, void 0, void 0, function* () {
+        var _a, _b, _c, _d;
+        if (!studies || studies.length === 0)
+            return;
+        const studiesStorageValues = yield chrome.storage.sync.get([
+            SHOW_NOTIFICATION,
+            AUDIO_ACTIVE,
+            FOCUS_PROLIFIC,
+            AUDIO,
+            VOLUME,
+            USE_OLD,
+        ]);
+        if (studiesStorageValues[USE_OLD] === true)
+            return;
+        const shouldShowNotification = (_a = studiesStorageValues[SHOW_NOTIFICATION]) !== null && _a !== void 0 ? _a : true;
+        const shouldPlayAudio = (_b = studiesStorageValues[AUDIO_ACTIVE]) !== null && _b !== void 0 ? _b : true;
+        const shouldFocusProlific = (_c = studiesStorageValues[FOCUS_PROLIFIC]) !== null && _c !== void 0 ? _c : false;
+        if (shouldPlayAudio) {
+            const audio = (_d = studiesStorageValues[AUDIO]) !== null && _d !== void 0 ? _d : 'alert1.mp3';
+            const volume = studiesStorageValues[VOLUME] ? studiesStorageValues[VOLUME] / 100 : 100;
+            yield playAudio(audio, volume);
+        }
+        if (shouldFocusProlific) {
+            yield focusProlific();
+        }
+        if (shouldShowNotification) {
+            studies
+                .sort((a, b) => getFloatValueFromMoneyString(b.reward || "0") - getFloatValueFromMoneyString(a.reward || "0"))
+                .forEach((study, index) => {
+                    setTimeout(() => {
+                        sendNotification(study);
+                    }, index === 0 ? 0 : 1000);
+                });
+        }
+        yield updateCounterAndBadge(studies.length);
+    });
+}
+chrome.runtime.onStartup.addListener(function () {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (yield getValueFromStorage(OPEN_PROLIFIC, false)) {
+            yield chrome.tabs.create({ url: "https://app.prolific.com/", active: false });
+        }
+        // Weekly Notification Logic
+        const lastNotif = yield getValueFromStorage('lastRateNotification', 0);
+        const now = Date.now();
+        const sevenDays = 7 * 24 * 60 * 60 * 1000;
+        if (now - lastNotif > sevenDays) {
+            chrome.notifications.create('rate-extension', {
+                type: 'basic',
+                iconUrl: chrome.runtime.getURL(ICON_URL),
+                title: 'Enjoying Prolific Notifier?',
+                message: 'Please consider rating us or buying me a coffee to support development!',
+                buttons: [{ title: 'Rate / Donate' }, { title: 'Dismiss' }]
+            });
+            yield chrome.storage.sync.set({ 'lastRateNotification': now });
+        }
+    });
+});
+function initialize() {
+    return __awaiter(this, void 0, void 0, function* () {
+        // No title alert setup needed for V2 if we dropped it, or keep it if needed.
+        // Simplified for now.
+    });
+}
+function playAudio(audio = 'alert1.mp3', volume = 1.0) {
+    return new Promise((resolve) => {
+        const sound = new Audio(chrome.runtime.getURL('audio/' + audio));
+        sound.volume = volume;
+        sound.play().then(resolve).catch(err => console.error(err));
+    });
+}
+function setInitialValues() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield chrome.storage.local.set({ [CURRENT_STUDIES]: [] });
+        yield chrome.storage.sync.set({
+            [AUDIO_ACTIVE]: true,
+            [AUDIO]: "alert1.mp3",
+            [SHOW_NOTIFICATION]: true,
+            [FOCUS_PROLIFIC]: false,
+            [USE_OLD]: false,
+            [OPEN_PROLIFIC]: false,
+            [VOLUME]: 100,
+            [ACTIVE_TAB]: "settings",
+            [TRACK_IDS]: true,
+            [STUDY_HISTORY_LEN]: 100,
+            [SORT_STUDIES]: "created+",
+            [REFRESH_RATE]: 0,
+            "reward": 0,
+            "rewardPerHour": 0,
+            "time": 0,
+            "researcherBlacklist": [],
+            "nameBlacklist": []
+        });
+    });
+}
+function sendNotification(study = null) {
+    let title = TITLE;
+    let message = MESSAGE;
+    let id = "";
+    if (study) {
+        if (study.id) {
+            id = study.id;
+        }
+        if (study.title && study.researcher) {
+            title = `${study.title}\nBy ${study.researcher}`;
+        }
+        if (study.reward) {
+            message += `\nReward: ${study.reward}`;
+        }
+        if (study.rewardPerHour) {
+            message += `\nReward per hour: ${study.rewardPerHour}`;
+        }
+        if (study.time) {
+            message += `\nTime: ${study.time}`;
+        }
+    }
+    chrome.notifications.create(id, {
+        type: 'basic',
+        iconUrl: chrome.runtime.getURL(ICON_URL),
+        title: title,
+        message: message,
+        // Firefox V2 notifications might not support buttons the same way, but we'll try.
+        // If buttons fail in FF, they just won't show.
+    });
+}
+function updateBadge(counter) {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield chrome.browserAction.setBadgeText({ text: counter.toString() });
+        yield chrome.browserAction.setBadgeBackgroundColor({ color: "#9dec14" });
+    });
+}
+function updateCounterAndBadge() {
+    return __awaiter(this, arguments, void 0, function* (count = 1) {
+        yield updateBadge(count);
+        let counter = (yield getValueFromStorage(COUNTER, 0)) + count;
+        yield chrome.storage.sync.set({ [COUNTER]: counter });
+    });
+}
+function getFloatValueFromMoneyString(value) {
+    const firstWord = value.split(" ")[0];
+    if (firstWord.charAt(0) === '£') {
+        return parseFloat(firstWord.slice(1));
+    }
+    else if (firstWord.charAt(0) === '$') {
+        return parseFloat(firstWord.slice(1)) * 0.8;
+    }
+    else {
+        return 0;
+    }
+}
