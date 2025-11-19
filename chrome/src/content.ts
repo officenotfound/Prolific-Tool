@@ -259,6 +259,9 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
         studies = studies.filter((study) => shouldIncludeStudy(study));
     }
 
+    // PHASE 2: Log studies to history
+    await logStudiesToHistory(studies);
+
     if (shouldIgnoreOldStudies) {
         savedStudies = [...savedStudies, ...studies];
     } else {
@@ -272,6 +275,60 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     }
 
     return studies;
+}
+
+// PHASE 2: Study History Logging
+async function logStudiesToHistory(newStudies: StudyContent[]): Promise<void> {
+    if (newStudies.length === 0) return;
+
+    const historyData = await chrome.storage.local.get("studyHistory");
+    let history: StudyHistory = historyData["studyHistory"] || { studies: [], lastUpdated: new Date().toISOString() };
+
+    const now = new Date().toISOString();
+
+    newStudies.forEach(newStudy => {
+        if (!newStudy.id) return;
+
+        // Check if study already exists in history
+        const existingIndex = history.studies.findIndex(s => s.id === newStudy.id);
+
+        if (existingIndex >= 0) {
+            // Update existing study
+            history.studies[existingIndex].lastSeen = now;
+            // Preserve history fields
+            history.studies[existingIndex] = {
+                ...newStudy,
+                firstSeen: history.studies[existingIndex].firstSeen,
+                lastSeen: now,
+                clicked: history.studies[existingIndex].clicked,
+                completed: history.studies[existingIndex].completed,
+                completedDate: history.studies[existingIndex].completedDate,
+                actualPay: history.studies[existingIndex].actualPay,
+                status: history.studies[existingIndex].status
+            };
+        } else {
+            // Add new study to history
+            history.studies.push({
+                ...newStudy,
+                firstSeen: now,
+                lastSeen: now,
+                clicked: false,
+                completed: false,
+                completedDate: null,
+                actualPay: null,
+                status: 'pending'
+            });
+        }
+    });
+
+    // Keep only last 500 studies (configurable)
+    const maxHistorySize = 500;
+    if (history.studies.length > maxHistorySize) {
+        history.studies = history.studies.slice(-maxHistorySize);
+    }
+
+    history.lastUpdated = now;
+    await chrome.storage.local.set({ "studyHistory": history });
 }
 
 function getTextContent(element: Element | null, selector: string): string | null {
