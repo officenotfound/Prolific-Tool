@@ -49,13 +49,10 @@ browser.notifications.onButtonClicked?.addListener((notificationId: string, butt
     void browser.notifications.clear(notificationId);
 });
 
-browser.runtime.onInstalled.addListener(async ({ reason }) => {
-    if (reason === "install") {
+browser.runtime.onInstalled.addListener(async ({ reason: details }) => {
+    if (details === "install") {
         await setInitialValues();
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        await browser.tabs.create({ url: "https://svitspindler.com/prolific-studies-notifier", active: true });
-        browser.runtime.setUninstallURL?.(`https://svitspindler.com/uninstall?extension=${encodeURIComponent("Prolific Tool Firefox")}`);
-    } else if (reason === "update") {
+    } else if (details === "update") {
         const result = await browser.storage.sync.get([CURRENT_STUDIES]);
         await browser.storage.local.set({ [CURRENT_STUDIES]: result[CURRENT_STUDIES] ?? [] });
         await browser.storage.sync.set({ [REFRESH_RATE]: 0 });

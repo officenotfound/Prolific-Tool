@@ -180,6 +180,65 @@ async function setupSettings() {
         });
     });
 
+    // Auto-Refresh Start/Stop Button
+    const toggleButton = document.getElementById('toggleAutoRefresh');
+    const refreshStatus = document.getElementById('refreshStatus');
+    let isRefreshRunning = false;
+
+    if (toggleButton) {
+        toggleButton.addEventListener('click', async () => {
+            const enableAutoRefresh = document.getElementById('autoRefreshEnabled').checked;
+
+            if (!enableAutoRefresh) {
+                alert('Please enable "Enable Auto-Refresh" checkbox first!');
+                return;
+            }
+
+            isRefreshRunning = !isRefreshRunning;
+
+            // Update button and status
+            if (isRefreshRunning) {
+                toggleButton.textContent = '⏸️ Stop Auto-Refresh';
+                toggleButton.classList.remove('btn-primary');
+                toggleButton.classList.add('btn-danger');
+                refreshStatus.textContent = 'Auto-refresh is running...';
+                refreshStatus.style.color = '#1e8e3e';
+            } else {
+                toggleButton.textContent = '▶️ Start Auto-Refresh';
+                toggleButton.classList.remove('btn-danger');
+                toggleButton.classList.add('btn-primary');
+                refreshStatus.textContent = 'Auto-refresh is stopped';
+                refreshStatus.style.color = '#5f6368';
+            }
+
+            // Save state
+            await chrome.storage.sync.set({ autoRefreshRunning: isRefreshRunning });
+
+            // Send message to content script to start/stop refresh
+            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                if (tabs[0]) {
+                    chrome.tabs.sendMessage(tabs[0].id, {
+                        target: 'content',
+                        type: 'toggle-auto-refresh',
+                        data: isRefreshRunning
+                    });
+                }
+            });
+        });
+
+        // Load initial state
+        chrome.storage.sync.get('autoRefreshRunning', (result) => {
+            isRefreshRunning = result.autoRefreshRunning || false;
+            if (isRefreshRunning) {
+                toggleButton.textContent = '⏸️ Stop Auto-Refresh';
+                toggleButton.classList.remove('btn-primary');
+                toggleButton.classList.add('btn-danger');
+                refreshStatus.textContent = 'Auto-refresh is running...';
+                refreshStatus.style.color = '#1e8e3e';
+            }
+        });
+    }
+
     // Initial state for refresh rate input
     const autoRefreshEnabled = settings.autoRefreshEnabled !== undefined ? settings.autoRefreshEnabled : false;
     document.getElementById('refreshRate').disabled = !autoRefreshEnabled || settings.randomRefresh;
