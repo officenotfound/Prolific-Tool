@@ -145,6 +145,28 @@ async function setupSettings() {
                 document.getElementById('randomRefresh').disabled = !isEnabled;
                 updateAutoRefreshStatus(isEnabled);
             }
+
+            // Toggle dark mode on Prolific website
+            if (id === 'darkMode') {
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    if (tabs[0]) {
+                        chrome.tabs.sendMessage(tabs[0].id, {
+                            target: 'content',
+                            type: 'toggle-dark-mode',
+                            data: e.target.checked
+                        });
+                    }
+                });
+            }
+
+            // Toggle extension dark mode
+            if (id === 'extensionDarkMode') {
+                if (e.target.checked) {
+                    document.body.classList.add('extension-dark-mode');
+                } else {
+                    document.body.classList.remove('extension-dark-mode');
+                }
+            }
         });
     });
 
