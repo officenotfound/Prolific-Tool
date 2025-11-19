@@ -19,6 +19,21 @@
 
 ---
 
+## 🙏 Acknowledgments
+
+This project is a fork and enhancement of the original [Prolific Studies Notifier](https://github.com/spin311/ProlificAutomaticStudies) created by [spin311](https://github.com/spin311). 
+
+**Major enhancements in this version:**
+- 🌙 Dark Mode for Prolific website
+- ⚙️ Opt-in auto-refresh (disabled by default)
+- 🎨 Redesigned Material Design UI
+- 📊 Enhanced study management features
+- 📝 Comprehensive documentation
+
+Thank you to spin311 for creating the foundation that made this tool possible!
+
+---
+
 ## ✨ Features
 
 ### 🌙 **Dark Mode**
