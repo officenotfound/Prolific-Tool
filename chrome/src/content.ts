@@ -182,6 +182,36 @@ async function waitForElement(selector: string): Promise<Element | null> {
     });
 }
 
+function getFloatValueFromMoneyStringContent(value: string, currency: string = 'USD', rates: any = {}): number {
+    const firstWord = value.split(" ")[0];
+    const amount = parseFloat(firstWord.replace(/[£$€]/g, ""));
+
+    if (isNaN(amount)) return 0;
+
+    // Base currency is GBP (Prolific default)
+    let gbpAmount = amount;
+    if (firstWord.includes('$')) {
+        // If already USD (some studies might be), convert back to GBP first if needed, or just treat as USD
+        // For simplicity, let's assume input is usually GBP from Prolific
+        // If input is $, assume it's approx 0.8 GBP
+        gbpAmount = amount * 0.8;
+    } else if (firstWord.includes('€')) {
+        gbpAmount = amount * 0.85; // Approx
+    }
+
+    if (currency === 'GBP') return gbpAmount;
+
+    const rate = rates[currency] || 1.27; // Default to USD rate if missing
+    return gbpAmount * rate;
+}
+
+function formatCurrency(amount: number, currency: string): string {
+    const symbols: { [key: string]: string } = {
+        'USD': '$', 'GBP': '£', 'EUR': '€', 'CAD': 'C$', 'AUD': 'A$', 'NZD': 'NZ$'
+    };
+    return `${symbols[currency] || '$'}${amount.toFixed(2)}`;
+}
+
 async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     const studyElements = targetNode.querySelectorAll("li[class='list-item']");
     const storageValues = await chrome.storage.sync.get([
@@ -196,10 +226,15 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
         "hideUnderOneDollar",
         "useWhitelist",
         "researcherWhitelist",
+        "currency"
     ]);
     const localValues = await chrome.storage.local.get([
         "currentStudies",
+        "exchangeRates"
     ]);
+
+    const currency = storageValues["currency"] || "USD";
+    const rates = localValues["exchangeRates"] || {};
 
     const shouldIgnoreOldStudies: boolean = storageValues["trackIds"] ?? true;
     if (!studyElements || studyElements.length === 0) {
@@ -212,8 +247,8 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     let studies: StudyContent[] = [];
     const numberOfStudiesToStore = storageValues["studyHistoryLen"] ?? NUMBER_OF_STUDIES_TO_STORE;
     let savedStudies: StudyContent[] = localValues["currentStudies"] ?? [];
-    const reward: number = storageValues[REWARD] ?? 0;
-    const rewardPerHour: number = storageValues[REWARD_PER_HOUR] ?? 0;
+    const rewardFilter: number = storageValues[REWARD] ?? 0;
+    const rewardPerHourFilter: number = storageValues[REWARD_PER_HOUR] ?? 0;
     const time: number = storageValues[TIME] ?? 0;
     const nameBlacklist: string[] = storageValues[NAME_BLACKLIST] ?? [];
     const researcherBlacklist: string[] = storageValues[RESEARCHER_BLACKLIST] ?? [];
@@ -224,27 +259,23 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     const studyIds = savedStudies.map((study) => study.id);
 
     function shouldIncludeStudy(study: StudyContent) {
+        // Convert study reward to selected currency for filtering
+        const studyReward = getFloatValueFromMoneyStringContent(study.reward || "0", currency, rates);
+        const studyHourly = getFloatValueFromMoneyStringContent(study.rewardPerHour || "0", currency, rates);
+
         // Existing filters
-        if (reward && study.reward && getFloatValueFromMoneyStringContent(study.reward) < reward) return false;
+        if (rewardFilter && studyReward < rewardFilter) return false;
         if (time && study.timeInMinutes && study.timeInMinutes < time) return false;
         if (nameBlacklist.some((name) => study.title?.toLowerCase().includes(name))) return false;
         if (researcherBlacklist.some((researcher) => study.researcher?.toLowerCase().includes(researcher))) return false;
-        if (rewardPerHour && study.rewardPerHour && getFloatValueFromMoneyStringContent(study.rewardPerHour) < rewardPerHour) return false;
+        if (rewardPerHourFilter && studyHourly < rewardPerHourFilter) return false;
 
-        // NEW FILTERS - TOS Compliant (passive filtering only)
-        // Minimum pay filter
-        if (minPay > 0 && study.reward) {
-            const payAmount = getFloatValueFromMoneyStringContent(study.reward);
-            if (payAmount < minPay) return false;
-        }
+        // NEW FILTERS
+        if (minPay > 0 && studyReward < minPay) return false;
 
-        // Quick filter: Hide studies under £1
-        if (hideUnderOneDollar && study.reward) {
-            const payAmount = getFloatValueFromMoneyStringContent(study.reward);
-            if (payAmount < 1.0) return false;
-        }
+        // Quick filter: Hide studies under 1 unit of selected currency
+        if (hideUnderOneDollar && studyReward < 1.0) return false;
 
-        // Researcher whitelist (when enabled, ONLY show whitelisted researchers)
         if (useWhitelist && researcherWhitelist.length > 0) {
             const researcherName = study.researcher?.toLowerCase() ?? "";
             const isWhitelisted = researcherWhitelist.some((researcher) =>
@@ -257,7 +288,7 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     }
 
     function shouldFilterStudies() {
-        return reward > 0 || rewardPerHour > 0 || time > 0 || nameBlacklist.length > 0 || researcherBlacklist.length > 0 || minPay > 0 || hideUnderOneDollar || (useWhitelist && researcherWhitelist.length > 0);
+        return rewardFilter > 0 || rewardPerHourFilter > 0 || time > 0 || nameBlacklist.length > 0 || researcherBlacklist.length > 0 || minPay > 0 || hideUnderOneDollar || (useWhitelist && researcherWhitelist.length > 0);
     }
 
     studyElements.forEach((study) => {
@@ -265,8 +296,18 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
         if (!id || studyIds?.includes(id)) return;
         const title = getTextContent(study, '[data-testid="title"]');
         const researcher = getTextContent(study, '[data-testid="host"]')?.split(" ").slice(1).join(" ") || null;
-        const reward = getTextContent(study, '[data-testid="study-tag-reward"]');
-        const rewardPerHour = getTextContent(study, '[data-testid="study-tag-reward-per-hour"]')?.replace("/hr", "") || null;
+
+        // Get raw text (usually GBP)
+        const rawReward = getTextContent(study, '[data-testid="study-tag-reward"]');
+        const rawHourly = getTextContent(study, '[data-testid="study-tag-reward-per-hour"]')?.replace("/hr", "") || null;
+
+        // Convert to selected currency for display
+        const rewardVal = getFloatValueFromMoneyStringContent(rawReward || "0", currency, rates);
+        const hourlyVal = getFloatValueFromMoneyStringContent(rawHourly || "0", currency, rates);
+
+        const reward = formatCurrency(rewardVal, currency);
+        const rewardPerHour = formatCurrency(hourlyVal, currency);
+
         const time = getTextContent(study, '[data-testid="study-tag-completion-time"]');
         const timeInMinutes = parseTimeContent(time);
         studies.push({
@@ -301,98 +342,4 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     }
 
     return studies;
-}
-
-// PHASE 2: Study History Logging
-async function logStudiesToHistory(newStudies: StudyContent[]): Promise<void> {
-    if (newStudies.length === 0) return;
-
-    const historyData = await chrome.storage.local.get("studyHistory");
-    let history: StudyHistory = historyData["studyHistory"] || { studies: [], lastUpdated: new Date().toISOString() };
-
-    const now = new Date().toISOString();
-
-    newStudies.forEach(newStudy => {
-        if (!newStudy.id) return;
-
-        // Check if study already exists in history
-        const existingIndex = history.studies.findIndex(s => s.id === newStudy.id);
-
-        if (existingIndex >= 0) {
-            // Update existing study
-            history.studies[existingIndex].lastSeen = now;
-            // Preserve history fields
-            history.studies[existingIndex] = {
-                ...newStudy,
-                firstSeen: history.studies[existingIndex].firstSeen,
-                lastSeen: now,
-                clicked: history.studies[existingIndex].clicked,
-                completed: history.studies[existingIndex].completed,
-                completedDate: history.studies[existingIndex].completedDate,
-                actualPay: history.studies[existingIndex].actualPay,
-                status: history.studies[existingIndex].status
-            };
-        } else {
-            // Add new study to history
-            history.studies.push({
-                ...newStudy,
-                firstSeen: now,
-                lastSeen: now,
-                clicked: false,
-                completed: false,
-                completedDate: null,
-                actualPay: null,
-                status: 'pending'
-            });
-        }
-    });
-
-    // Keep only last 500 studies (configurable)
-    const maxHistorySize = 500;
-    if (history.studies.length > maxHistorySize) {
-        history.studies = history.studies.slice(-maxHistorySize);
-    }
-
-    history.lastUpdated = now;
-    await chrome.storage.local.set({ "studyHistory": history });
-}
-
-function getTextContent(element: Element | null, selector: string): string | null {
-    return element?.querySelector(selector)?.textContent || null;
-}
-
-function parseTimeContent(value: string | null): number {
-    if (!value) return 0;
-    const hourMatch = value.match(/(\d+)\s*hour/);
-    const minMatch = value.match(/(\d+)\s*min/);
-
-    const hours = hourMatch ? parseInt(hourMatch[1], 10) : 0;
-    const minutes = minMatch ? parseInt(minMatch[1], 10) : 0;
-
-    return hours * 60 + minutes;
-}
-
-function getFloatValueFromMoneyStringContent(value: string): number {
-    const firstWord = value.split(" ")[0];
-    if (firstWord.charAt(0) === '£') {
-        // Convert GBP to USD (1 GBP ≈ 1.27 USD as of 2024)
-        return parseFloat(firstWord.slice(1)) * 1.27;
-    } else if (firstWord.charAt(0) === '$') {
-        // Already in USD
-        return parseFloat(firstWord.slice(1));
-    } else {
-        return 0;
-    }
-}
-
-// Helper function to format amount as USD
-function formatAsUSD(amount: number): string {
-    return `$${amount.toFixed(2)}`;
-}
-
-// Helper function to convert GBP string to USD string
-function convertToUSD(moneyString: string | null): string {
-    if (!moneyString) return "$0.00";
-    const amount = getFloatValueFromMoneyStringContent(moneyString);
-    return formatAsUSD(amount);
 }
