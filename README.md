@@ -66,7 +66,7 @@
 3. Enable **Developer mode** (toggle in top-right)
 4. Click **Load unpacked**
 5. Select the `chrome` folder from this repository
-6. Pin the extension to your toolbar
+6. **Pin the extension** (see instructions below)
 7. Open [Prolific](https://app.prolific.com/) and enjoy!
 
 #### Firefox
@@ -74,8 +74,20 @@
 2. Open `about:debugging#/runtime/this-firefox` in Firefox
 3. Click **Load Temporary Add-on**
 4. Select any file in the `firefox` folder
-5. Pin the extension to your toolbar
+5. **Pin the extension** to your toolbar
 6. Open [Prolific](https://app.prolific.com/) and enjoy!
+
+### 📌 How to Pin the Extension in Chrome
+
+**Step 1**: Click the puzzle piece icon (Extensions) in your Chrome toolbar
+
+![Pin Extension Step 1](Screenshots/pin%20step%201.jpg)
+
+**Step 2**: Click the pin icon next to "Prolific Tool" to pin it to your toolbar
+
+![Pin Extension Step 2](Screenshots/pin%20step%202.jpg)
+
+Once pinned, the Prolific Tool icon will appear directly in your toolbar for easy access!
 
 ---
 
@@ -83,14 +95,17 @@
 
 ### Initial Setup
 
-1. **Enable Notifications**  
+1. **Pin the Extension** (Important!)  
+   After installing, make sure to pin Prolific Tool to your toolbar for easy access. See the [pinning instructions above](#-how-to-pin-the-extension-in-chrome).
+
+2. **Enable Notifications**  
    Make sure notifications are enabled in both your browser AND system settings for the best experience.
 
    | Chrome Notifications | System Notifications |
    |---------------------|---------------------|
    | ![Chrome Notifications](Screenshots/Chrome%20Notifications.jpg) | ![System Notifications](Screenshots/System%20Notifications.jpg) |
 
-2. **Configure Your Preferences**  
+3. **Configure Your Preferences**  
    Open the extension popup and customize:
    - 🌙 **Dark Mode** - Toggle the dark theme
    - ⚙️ **Enable Auto Refresh** - Turn on automatic study checking
@@ -98,8 +113,8 @@
    - 🔊 **Notification Sound** - Choose your preferred alert
    - 🔔 **Show Notifications** - Enable/disable desktop alerts
 
-3. **Pin the Extension**  
-   Click the puzzle icon in your browser toolbar and pin Prolific Tool for quick access.
+4. **Open Prolific**  
+   Keep a [Prolific](https://app.prolific.com/) tab open for the extension to monitor for new studies.
 
 ### How It Works
 
