@@ -7,6 +7,19 @@ type StudyContent = {
     time: string | null;
     timeInMinutes: number | null;
     createdAt: string | null;
+    // History tracking fields
+    firstSeen?: string;
+    lastSeen?: string;
+    clicked?: boolean;
+    completed?: boolean;
+    completedDate?: string | null;
+    actualPay?: number | null;
+    status?: 'pending' | 'approved' | 'rejected';
+};
+
+type StudyHistory = {
+    studies: StudyContent[];
+    lastUpdated: string;
 };
 
 const targetSelector = 'div[data-testid="studies-list"]';
@@ -279,10 +292,24 @@ function parseTimeContent(value: string | null): number {
 function getFloatValueFromMoneyStringContent(value: string): number {
     const firstWord = value.split(" ")[0];
     if (firstWord.charAt(0) === '£') {
-        return parseFloat(firstWord.slice(1));
+        // Convert GBP to USD (1 GBP ≈ 1.27 USD as of 2024)
+        return parseFloat(firstWord.slice(1)) * 1.27;
     } else if (firstWord.charAt(0) === '$') {
-        return parseFloat(firstWord.slice(1)) * 0.8;
+        // Already in USD
+        return parseFloat(firstWord.slice(1));
     } else {
         return 0;
     }
+}
+
+// Helper function to format amount as USD
+function formatAsUSD(amount: number): string {
+    return `$${amount.toFixed(2)}`;
+}
+
+// Helper function to convert GBP string to USD string
+function convertToUSD(moneyString: string | null): string {
+    if (!moneyString) return "$0.00";
+    const amount = getFloatValueFromMoneyStringContent(moneyString);
+    return formatAsUSD(amount);
 }
