@@ -1,29 +1,53 @@
 
-// FAQ Data embedded for simplicity
+// FAQ Data embedded for simplicity - Updated for 2024/2025
 const FAQ_DATA = [
     {
         "question": "What is Prolific?",
-        "answer": "Prolific is a service that connects researchers with participants. Researchers pay Prolific, and Prolific pays you for your contributions to studies."
+        "answer": "Prolific is a platform that connects researchers with participants for academic and industry studies. You earn money by sharing your insights and experiences in research studies."
     },
     {
         "question": "How do I get started?",
-        "answer": "Register, verify your identity, take 'Your first study', and fill out your demographics in the 'About You' section. You may be placed on a waiting list initially."
-    },
-    {
-        "question": "Why do I see no studies?",
-        "answer": "Study availability depends on your demographics and researcher needs. Prolific also uses 'adaptive rate limiting' to prioritize users who haven't taken studies recently."
-    },
-    {
-        "question": "What does 'Multiple submissions allowed' mean?",
-        "answer": "This means you can take the study more than once if spots are available. It works like batch jobs on other platforms."
-    },
-    {
-        "question": "Why do I see studies with 1 spot that are full?",
-        "answer": "These are often studies where a participant returned their submission or timed out. The spot becomes available briefly and is quickly taken by another user."
+        "answer": "Sign up on Prolific, verify your email and ID (using Onfido), complete 'Your first study' (practice), and fill out your 'About You' demographics. You may be placed on a waitlist initially - this can range from days to months depending on researcher demand for your demographic."
     },
     {
         "question": "How do I get paid?",
-        "answer": "Prolific pays via PayPal. You can cash out once you reach £5. After 4 successful cashouts, you gain access to instant cashouts."
+        "answer": "Prolific pays via PayPal (through Hyperwallet). You can cash out once you reach £6 or $6. After your first 4 cashouts, payments are typically instant! Researchers have up to 22 days to approve studies, but it's usually much faster."
+    },
+    {
+        "question": "How often can I withdraw money?",
+        "answer": "You can withdraw once every 24 hours (resets at midnight UTC). NEW: If you recently updated your PayPal address or have fewer than 4 cashouts, there's a 72-hour cool-off period between withdrawals for security."
+    },
+    {
+        "question": "What is the minimum hourly rate?",
+        "answer": "Prolific enforces a minimum of $8/£6 per hour, but researchers are encouraged to pay at least $12/£9 per hour. Studies must meet these minimums to be posted on the platform."
+    },
+    {
+        "question": "Why do I see no studies?",
+        "answer": "Study availability depends on your demographics and researcher needs. Prolific uses 'adaptive rate limiting' to prioritize participants who haven't taken studies recently, ensuring fresh participant pools for researchers."
+    },
+    {
+        "question": "What is adaptive rate limiting?",
+        "answer": "When many participants are active but few studies are available, Prolific prioritizes those who've spent less time on studies recently. When studies fill slowly, limits are loosened. This ensures fair distribution and 'naivety' in research."
+    },
+    {
+        "question": "What does 'Multiple submissions allowed' mean?",
+        "answer": "You can take the study more than once if spots are available. This works like batch jobs - complete one submission, then you can reserve another spot if available."
+    },
+    {
+        "question": "Why do I see studies with 1 spot that are full?",
+        "answer": "These are often studies where a participant returned their submission or timed out. The spot becomes available briefly and is quickly taken by another user. This extension helps you catch these!"
+    },
+    {
+        "question": "How do I avoid rejections?",
+        "answer": "Take appropriate time to complete studies, answer all questions thoroughly, pay attention to instructions and attention checks, give thoughtful responses (especially for open-ended questions), and don't use AI assistance unless specifically requested."
+    },
+    {
+        "question": "Is my data safe?",
+        "answer": "Yes! Prolific uses identity verification, requires PayPal only for payment, and keeps your identity anonymous from researchers. They only see demographic info and your anonymous Prolific ID. Data is never shared with third-party advertisers."
+    },
+    {
+        "question": "What if I have an issue with a study?",
+        "answer": "Contact the researcher first through Prolific's messaging system. If not resolved within 7 days, submit a support request to the Prolific team. They'll investigate and help resolve the issue."
     }
 ];
 
