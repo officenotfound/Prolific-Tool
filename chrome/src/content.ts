@@ -153,6 +153,10 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
         TIME,
         NAME_BLACKLIST,
         RESEARCHER_BLACKLIST,
+        "minPay",
+        "hideUnderOneDollar",
+        "useWhitelist",
+        "researcherWhitelist",
     ]);
     const localValues = await chrome.storage.local.get([
         "currentStudies",
@@ -174,18 +178,47 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     const time: number = storageValues[TIME] ?? 0;
     const nameBlacklist: string[] = storageValues[NAME_BLACKLIST] ?? [];
     const researcherBlacklist: string[] = storageValues[RESEARCHER_BLACKLIST] ?? [];
+    const minPay: number = storageValues["minPay"] ?? 0;
+    const hideUnderOneDollar: boolean = storageValues["hideUnderOneDollar"] ?? false;
+    const useWhitelist: boolean = storageValues["useWhitelist"] ?? false;
+    const researcherWhitelist: string[] = storageValues["researcherWhitelist"] ?? [];
     const studyIds = savedStudies.map((study) => study.id);
 
     function shouldIncludeStudy(study: StudyContent) {
+        // Existing filters
         if (reward && study.reward && getFloatValueFromMoneyStringContent(study.reward) < reward) return false;
         if (time && study.timeInMinutes && study.timeInMinutes < time) return false;
         if (nameBlacklist.some((name) => study.title?.toLowerCase().includes(name))) return false;
         if (researcherBlacklist.some((researcher) => study.researcher?.toLowerCase().includes(researcher))) return false;
-        return !(rewardPerHour && study.rewardPerHour && getFloatValueFromMoneyStringContent(study.rewardPerHour) < rewardPerHour);
+        if (rewardPerHour && study.rewardPerHour && getFloatValueFromMoneyStringContent(study.rewardPerHour) < rewardPerHour) return false;
+
+        // NEW FILTERS - TOS Compliant (passive filtering only)
+        // Minimum pay filter
+        if (minPay > 0 && study.reward) {
+            const payAmount = getFloatValueFromMoneyStringContent(study.reward);
+            if (payAmount < minPay) return false;
+        }
+
+        // Quick filter: Hide studies under £1
+        if (hideUnderOneDollar && study.reward) {
+            const payAmount = getFloatValueFromMoneyStringContent(study.reward);
+            if (payAmount < 1.0) return false;
+        }
+
+        // Researcher whitelist (when enabled, ONLY show whitelisted researchers)
+        if (useWhitelist && researcherWhitelist.length > 0) {
+            const researcherName = study.researcher?.toLowerCase() ?? "";
+            const isWhitelisted = researcherWhitelist.some((researcher) =>
+                researcherName.includes(researcher.toLowerCase())
+            );
+            if (!isWhitelisted) return false;
+        }
+
+        return true;
     }
 
     function shouldFilterStudies() {
-        return reward > 0 || rewardPerHour > 0 || time > 0 || nameBlacklist.length > 0 || researcherBlacklist.length > 0;
+        return reward > 0 || rewardPerHour > 0 || time > 0 || nameBlacklist.length > 0 || researcherBlacklist.length > 0 || minPay > 0 || hideUnderOneDollar || (useWhitelist && researcherWhitelist.length > 0);
     }
 
     studyElements.forEach((study) => {

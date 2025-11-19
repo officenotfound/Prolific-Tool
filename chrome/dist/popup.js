@@ -63,7 +63,8 @@ async function setupSettings() {
     // Load saved settings
     const settings = await chrome.storage.sync.get([
         'refreshRate', 'minPayRate', 'audio', 'volume',
-        'showNotification', 'audioActive', 'focusProlific', 'autoRefreshEnabled'
+        'showNotification', 'audioActive', 'focusProlific', 'autoRefreshEnabled',
+        'minPay', 'hideUnderOneDollar', 'useWhitelist'
     ]);
 
     // Helper to set input values
@@ -86,15 +87,20 @@ async function setupSettings() {
     setVal('darkMode', settings.darkMode, false);
     setVal('autoRefreshEnabled', settings.autoRefreshEnabled, false);
 
+    // Study Filters
+    setVal('minPay', settings.minPay, 0);
+    setVal('hideUnderOneDollar', settings.hideUnderOneDollar, false);
+    setVal('useWhitelist', settings.useWhitelist, false);
+
     // Add event listeners to save on change
-    const inputs = ['refreshRate', 'minPayRate', 'volume'];
+    const inputs = ['refreshRate', 'minPayRate', 'volume', 'minPay'];
     inputs.forEach(id => {
         document.getElementById(id).addEventListener('change', (e) => {
             chrome.storage.sync.set({ [id]: parseFloat(e.target.value) });
         });
     });
 
-    const checkboxes = ['showNotification', 'audioActive', 'focusProlific', 'randomRefresh', 'darkMode', 'autoRefreshEnabled'];
+    const checkboxes = ['showNotification', 'audioActive', 'focusProlific', 'randomRefresh', 'darkMode', 'autoRefreshEnabled', 'hideUnderOneDollar', 'useWhitelist'];
     checkboxes.forEach(id => {
         document.getElementById(id).addEventListener('change', (e) => {
             chrome.storage.sync.set({ [id]: e.target.checked });
