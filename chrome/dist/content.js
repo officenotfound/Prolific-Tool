@@ -145,6 +145,34 @@ async function waitForElement(selector) {
         }
     });
 }
+
+function getFloatValueFromMoneyStringContent(value, currency = 'USD', rates = {}) {
+    const firstWord = value.split(" ")[0];
+    const amount = parseFloat(firstWord.replace(/[£$€]/g, ""));
+
+    if (isNaN(amount)) return 0;
+
+    // Base currency is GBP (Prolific default)
+    let gbpAmount = amount;
+    if (firstWord.includes('$')) {
+        gbpAmount = amount * 0.8;
+    } else if (firstWord.includes('€')) {
+        gbpAmount = amount * 0.85;
+    }
+
+    if (currency === 'GBP') return gbpAmount;
+
+    const rate = rates[currency] || 1.27;
+    return gbpAmount * rate;
+}
+
+function formatCurrency(amount, currency) {
+    const symbols = {
+        'USD': '$', 'GBP': '£', 'EUR': '€', 'CAD': 'C$', 'AUD': 'A$', 'NZD': 'NZ$'
+    };
+    return `${symbols[currency] || '$'}${amount.toFixed(2)}`;
+}
+
 async function extractStudies(targetNode) {
     var _a, _b, _c, _d, _e, _f, _g, _h;
     const studyElements = targetNode.querySelectorAll("li[class='list-item']");
@@ -160,10 +188,16 @@ async function extractStudies(targetNode) {
         "hideUnderOneDollar",
         "useWhitelist",
         "researcherWhitelist",
+        "currency"
     ]);
     const localValues = await chrome.storage.local.get([
         "currentStudies",
+        "exchangeRates"
     ]);
+
+    const currency = storageValues["currency"] || "USD";
+    const rates = localValues["exchangeRates"] || {};
+
     const shouldIgnoreOldStudies = (_a = storageValues["trackIds"]) !== null && _a !== void 0 ? _a : true;
     if (!studyElements || studyElements.length === 0) {
         if (!shouldIgnoreOldStudies) {
@@ -174,8 +208,8 @@ async function extractStudies(targetNode) {
     let studies = [];
     const numberOfStudiesToStore = (_b = storageValues["studyHistoryLen"]) !== null && _b !== void 0 ? _b : NUMBER_OF_STUDIES_TO_STORE;
     let savedStudies = (_c = localValues["currentStudies"]) !== null && _c !== void 0 ? _c : [];
-    const reward = (_d = storageValues[REWARD]) !== null && _d !== void 0 ? _d : 0;
-    const rewardPerHour = (_e = storageValues[REWARD_PER_HOUR]) !== null && _e !== void 0 ? _e : 0;
+    const rewardFilter = (_d = storageValues[REWARD]) !== null && _d !== void 0 ? _d : 0;
+    const rewardPerHourFilter = (_e = storageValues[REWARD_PER_HOUR]) !== null && _e !== void 0 ? _e : 0;
     const time = (_f = storageValues[TIME]) !== null && _f !== void 0 ? _f : 0;
     const nameBlacklist = (_g = storageValues[NAME_BLACKLIST]) !== null && _g !== void 0 ? _g : [];
     const researcherBlacklist = (_h = storageValues[RESEARCHER_BLACKLIST]) !== null && _h !== void 0 ? _h : [];
@@ -184,41 +218,37 @@ async function extractStudies(targetNode) {
     const useWhitelist = storageValues["useWhitelist"] ?? false;
     const researcherWhitelist = storageValues["researcherWhitelist"] ?? [];
     const studyIds = savedStudies.map((study) => study.id);
+
     function shouldIncludeStudy(study) {
         var _a, _b;
+        // Convert study reward to selected currency for filtering
+        const studyReward = getFloatValueFromMoneyStringContent(study.reward || "0", currency, rates);
+        const studyHourly = getFloatValueFromMoneyStringContent(study.rewardPerHour || "0", currency, rates);
+
         // Existing filters
-        if (reward && study.reward && getFloatValueFromMoneyStringContent(study.reward) < reward)
-            return false;
-        if (time && study.timeInMinutes && study.timeInMinutes < time)
-            return false;
-        if (nameBlacklist.some((name) => { var _a; return (_a = study.title) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes(name); }))
-            return false;
-        if (researcherBlacklist.some((researcher) => { var _a; return (_a = study.researcher) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes(researcher); }))
-            return false;
-        if (rewardPerHour && study.rewardPerHour && getFloatValueFromMoneyStringContent(study.rewardPerHour) < rewardPerHour)
-            return false;
+        if (rewardFilter && studyReward < rewardFilter) return false;
+        if (time && study.timeInMinutes && study.timeInMinutes < time) return false;
+        if (nameBlacklist.some((name) => { var _a; return (_a = study.title) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes(name); })) return false;
+        if (researcherBlacklist.some((researcher) => { var _a; return (_a = study.researcher) === null || _a === void 0 ? void 0 : _a.toLowerCase().includes(researcher); })) return false;
+        if (rewardPerHourFilter && studyHourly < rewardPerHourFilter) return false;
+
         // NEW FILTERS
-        if (minPay > 0 && study.reward) {
-            const payAmount = getFloatValueFromMoneyStringContent(study.reward);
-            if (payAmount < minPay)
-                return false;
-        }
-        if (hideUnderOneDollar && study.reward) {
-            const payAmount = getFloatValueFromMoneyStringContent(study.reward);
-            if (payAmount < 1.0)
-                return false;
-        }
+        if (minPay > 0 && studyReward < minPay) return false;
+
+        if (hideUnderOneDollar && studyReward < 1.0) return false;
+
         if (useWhitelist && researcherWhitelist.length > 0) {
             const researcherName = (_b = (_a = study.researcher) === null || _a === void 0 ? void 0 : _a.toLowerCase()) !== null && _b !== void 0 ? _b : "";
             const isWhitelisted = researcherWhitelist.some((researcher) => researcherName.includes(researcher.toLowerCase()));
-            if (!isWhitelisted)
-                return false;
+            if (!isWhitelisted) return false;
         }
         return true;
     }
+
     function shouldFilterStudies() {
-        return reward > 0 || rewardPerHour > 0 || time > 0 || nameBlacklist.length > 0 || researcherBlacklist.length > 0 || minPay > 0 || hideUnderOneDollar || (useWhitelist && researcherWhitelist.length > 0);
+        return rewardFilter > 0 || rewardPerHourFilter > 0 || time > 0 || nameBlacklist.length > 0 || researcherBlacklist.length > 0 || minPay > 0 || hideUnderOneDollar || (useWhitelist && researcherWhitelist.length > 0);
     }
+
     studyElements.forEach((study) => {
         var _a, _b, _c;
         const id = (_a = study.getAttribute("data-testid")) === null || _a === void 0 ? void 0 : _a.split("-")[1];
@@ -226,8 +256,18 @@ async function extractStudies(targetNode) {
             return;
         const title = getTextContent(study, '[data-testid="title"]');
         const researcher = ((_b = getTextContent(study, '[data-testid="host"]')) === null || _b === void 0 ? void 0 : _b.split(" ").slice(1).join(" ")) || null;
-        const reward = getTextContent(study, '[data-testid="study-tag-reward"]');
-        const rewardPerHour = ((_c = getTextContent(study, '[data-testid="study-tag-reward-per-hour"]')) === null || _c === void 0 ? void 0 : _c.replace("/hr", "")) || null;
+
+        // Get raw text (usually GBP)
+        const rawReward = getTextContent(study, '[data-testid="study-tag-reward"]');
+        const rawHourly = ((_c = getTextContent(study, '[data-testid="study-tag-reward-per-hour"]')) === null || _c === void 0 ? void 0 : _c.replace("/hr", "")) || null;
+
+        // Convert to selected currency for display
+        const rewardVal = getFloatValueFromMoneyStringContent(rawReward || "0", currency, rates);
+        const hourlyVal = getFloatValueFromMoneyStringContent(rawHourly || "0", currency, rates);
+
+        const reward = formatCurrency(rewardVal, currency);
+        const rewardPerHour = formatCurrency(hourlyVal, currency);
+
         const time = getTextContent(study, '[data-testid="study-tag-completion-time"]');
         const timeInMinutes = parseTimeContent(time);
         studies.push({
@@ -241,6 +281,7 @@ async function extractStudies(targetNode) {
             createdAt: new Date().toISOString(),
         });
     });
+
     if (shouldFilterStudies()) {
         studies = studies.filter((study) => shouldIncludeStudy(study));
     }
@@ -296,25 +337,4 @@ function parseTimeContent(value) {
     const hours = hourMatch ? parseInt(hourMatch[1], 10) : 0;
     const minutes = minMatch ? parseInt(minMatch[1], 10) : 0;
     return hours * 60 + minutes;
-}
-function getFloatValueFromMoneyStringContent(value) {
-    const firstWord = value.split(" ")[0];
-    if (firstWord.charAt(0) === '£') {
-        return parseFloat(firstWord.slice(1)) * 1.27;
-    }
-    else if (firstWord.charAt(0) === '$') {
-        return parseFloat(firstWord.slice(1));
-    }
-    else {
-        return 0;
-    }
-}
-function formatAsUSD(amount) {
-    return `$${amount.toFixed(2)}`;
-}
-function convertToUSD(moneyString) {
-    if (!moneyString)
-        return "$0.00";
-    const amount = getFloatValueFromMoneyStringContent(moneyString);
-    return formatAsUSD(amount);
 }
