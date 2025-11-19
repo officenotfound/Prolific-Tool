@@ -57,12 +57,16 @@ document.addEventListener('DOMContentLoaded', async function () {
     setupSettings();
     setupFAQ();
 
+    // Initialize language system (i18n)
+    await initializeLanguage();
+    setupLanguageSwitcher();
+
     // Load Data
     await loadStudies();
     updateStats();
 
     // Clear badge
-    chrome.browserAction.setBadgeText({ text: '' });
+    chrome.action.setBadgeText({ text: '' });
 });
 
 function setupTabs() {
