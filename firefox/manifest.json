@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Prolific Tool",
-  "version": "3.2.0",
+  "version": "0.1.0-beta",
   "description": "Firefox extension for Prolific to notify you when studies are available",
   "permissions": [
     "storage",

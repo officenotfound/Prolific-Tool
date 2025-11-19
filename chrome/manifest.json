@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Prolific Tool",
-  "version": "3.1.1",
+  "version": "0.1.0-beta",
   "description": "Google extension for Prolific to notify you when studies are available",
   "permissions": [
     "storage",
