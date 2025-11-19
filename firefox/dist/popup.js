@@ -86,7 +86,7 @@ async function setupSettings() {
     const settings = await chrome.storage.sync.get([
         'refreshRate', 'minPayRate', 'audio', 'volume',
         'showNotification', 'audioActive', 'focusProlific', 'autoRefreshEnabled',
-        'minPay', 'hideUnderOneDollar', 'useWhitelist'
+        'minPay', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode'
     ]);
 
     // Helper to set input values
@@ -114,6 +114,12 @@ async function setupSettings() {
     setVal('hideUnderOneDollar', settings.hideUnderOneDollar, false);
     setVal('useWhitelist', settings.useWhitelist, false);
 
+    // Extension Dark Mode
+    setVal('extensionDarkMode', settings.extensionDarkMode, false);
+    if (settings.extensionDarkMode) {
+        document.body.classList.add('extension-dark-mode');
+    }
+
     // Add event listeners to save on change
     const inputs = ['refreshRate', 'minPayRate', 'volume', 'minPay'];
     inputs.forEach(id => {
@@ -122,7 +128,7 @@ async function setupSettings() {
         });
     });
 
-    const checkboxes = ['showNotification', 'audioActive', 'focusProlific', 'randomRefresh', 'darkMode', 'autoRefreshEnabled', 'hideUnderOneDollar', 'useWhitelist'];
+    const checkboxes = ['showNotification', 'audioActive', 'focusProlific', 'randomRefresh', 'darkMode', 'autoRefreshEnabled', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode'];
     checkboxes.forEach(id => {
         document.getElementById(id).addEventListener('change', (e) => {
             chrome.storage.sync.set({ [id]: e.target.checked });

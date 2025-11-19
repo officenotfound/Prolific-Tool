@@ -88,7 +88,7 @@ async function setupSettings() {
     const settings = await chrome.storage.sync.get([
         'refreshRate', 'minPayRate', 'audio', 'volume',
         'showNotification', 'audioActive', 'focusProlific', 'autoRefreshEnabled',
-        'minPay', 'hideUnderOneDollar', 'useWhitelist'
+        'minPay', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode'
     ]);
 
     // Helper to set input values
@@ -116,6 +116,12 @@ async function setupSettings() {
     setVal('hideUnderOneDollar', settings.hideUnderOneDollar, false);
     setVal('useWhitelist', settings.useWhitelist, false);
 
+    // Extension Dark Mode
+    setVal('extensionDarkMode', settings.extensionDarkMode, false);
+    if (settings.extensionDarkMode) {
+        document.body.classList.add('extension-dark-mode');
+    }
+
     // Add event listeners to save on change
     const inputs = ['refreshRate', 'minPayRate', 'volume', 'minPay'];
     inputs.forEach(id => {
@@ -124,7 +130,7 @@ async function setupSettings() {
         });
     });
 
-    const checkboxes = ['showNotification', 'audioActive', 'focusProlific', 'randomRefresh', 'darkMode', 'autoRefreshEnabled', 'hideUnderOneDollar', 'useWhitelist'];
+    const checkboxes = ['showNotification', 'audioActive', 'focusProlific', 'randomRefresh', 'darkMode', 'autoRefreshEnabled', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode'];
     checkboxes.forEach(id => {
         document.getElementById(id).addEventListener('change', (e) => {
             chrome.storage.sync.set({ [id]: e.target.checked });
@@ -140,6 +146,28 @@ async function setupSettings() {
                 document.getElementById('refreshRate').disabled = !isEnabled || settings.randomRefresh;
                 document.getElementById('randomRefresh').disabled = !isEnabled;
                 updateAutoRefreshStatus(isEnabled);
+            }
+
+            // Toggle dark mode on Prolific website
+            if (id === 'darkMode') {
+                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                    if (tabs[0]) {
+                        chrome.tabs.sendMessage(tabs[0].id, {
+                            target: 'content',
+                            type: 'toggle-dark-mode',
+                            data: e.target.checked
+                        });
+                    }
+                });
+            }
+
+            // Toggle extension dark mode
+            if (id === 'extensionDarkMode') {
+                if (e.target.checked) {
+                    document.body.classList.add('extension-dark-mode');
+                } else {
+                    document.body.classList.remove('extension-dark-mode');
+                }
             }
         });
     });
