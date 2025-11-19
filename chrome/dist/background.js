@@ -55,7 +55,6 @@ chrome.runtime.onInstalled.addListener((details) => __awaiter(void 0, void 0, vo
     if (details.reason === "install") {
         yield setInitialValues();
         // Extension installed - no external page opened
-        chrome.runtime.setUninstallURL(`https://svitspindler.com/uninstall?extension=${encodeURI("Prolific Tool")}`);
     }
     else if (details.reason === "update") {
         const result = yield chrome.storage.sync.get([CURRENT_STUDIES]);
