@@ -1,0 +1,191 @@
+{
+    "extensionName": {
+        "message": "Prolific Tool"
+    },
+    "extensionDescription": {
+        "message": "Extensión del navegador para Prolific que te notifica cuando hay estudios disponibles"
+    },
+    "studies": {
+        "message": "Estudios"
+    },
+    "history": {
+        "message": "Historial"
+    },
+    "settings": {
+        "message": "Configuración"
+    },
+    "faq": {
+        "message": "Preguntas frecuentes"
+    },
+    "support": {
+        "message": "Soporte"
+    },
+    "available": {
+        "message": "Disponibles"
+    },
+    "potential": {
+        "message": "Potencial"
+    },
+    "totalSeen": {
+        "message": "Total vistos"
+    },
+    "completed": {
+        "message": "Completados"
+    },
+    "searchStudies": {
+        "message": "Buscar estudios..."
+    },
+    "searchHistory": {
+        "message": "Buscar en historial..."
+    },
+    "noStudies": {
+        "message": "No hay estudios disponibles en este momento."
+    },
+    "checkBack": {
+        "message": "¡Vuelve pronto o activa la actualización automática!"
+    },
+    "noHistory": {
+        "message": "Aún no hay historial de estudios."
+    },
+    "historyWillAppear": {
+        "message": "Los estudios aparecerán aquí a medida que los veas."
+    },
+    "refreshInterval": {
+        "message": "Intervalo de actualización (segundos)"
+    },
+    "randomize": {
+        "message": "Aleatorio (15s - 60s)"
+    },
+    "enableAutoRefresh": {
+        "message": "Activar actualización automática"
+    },
+    "minimumPayRate": {
+        "message": "Tarifa mínima de pago ($/hora)"
+    },
+    "notificationSound": {
+        "message": "Sonido de notificación"
+    },
+    "volume": {
+        "message": "Volumen"
+    },
+    "testAudio": {
+        "message": "Probar audio"
+    },
+    "showNotifications": {
+        "message": "Mostrar notificaciones"
+    },
+    "playSound": {
+        "message": "Reproducir sonido"
+    },
+    "focusTabOnNewStudy": {
+        "message": "Enfocar pestaña en nuevo estudio"
+    },
+    "darkModeProlific": {
+        "message": "Modo oscuro (sitio web de Prolific)"
+    },
+    "darkModeProlificDesc": {
+        "message": "Activar tema oscuro en el sitio web de Prolific"
+    },
+    "extensionDarkMode": {
+        "message": "Modo oscuro de la extensión"
+    },
+    "extensionDarkModeDesc": {
+        "message": "Tema oscuro para esta ventana emergente de la extensión"
+    },
+    "studyFilters": {
+        "message": "Filtros de estudios"
+    },
+    "minimumPay": {
+        "message": "Pago mínimo ($)"
+    },
+    "minimumPayDesc": {
+        "message": "Ocultar estudios por debajo de esta cantidad (en USD)"
+    },
+    "hideUnderOneDollar": {
+        "message": "Ocultar estudios de menos de $1"
+    },
+    "useWhitelist": {
+        "message": "Usar lista blanca de investigadores"
+    },
+    "useWhitelistDesc": {
+        "message": "Cuando esté activado, solo mostrar estudios de investigadores en la lista blanca"
+    },
+    "languageTitle": {
+        "message": "🌐 Idioma"
+    },
+    "selectLanguage": {
+        "message": "Selecciona tu idioma preferido"
+    },
+    "english": {
+        "message": "Inglés"
+    },
+    "german": {
+        "message": "Alemán"
+    },
+    "spanish": {
+        "message": "Español"
+    },
+    "french": {
+        "message": "Francés"
+    },
+    "portuguese": {
+        "message": "Portugués"
+    },
+    "enjoyingExtension": {
+        "message": "¿Disfrutando de la extensión?"
+    },
+    "supportMessage": {
+        "message": "Tu apoyo me ayuda a mantener esta herramienta gratuita y actualizada. ¡Cada contribución marca la diferencia!"
+    },
+    "buyMeCoffee": {
+        "message": "☕ Invítame a un café"
+    },
+    "needHelp": {
+        "message": "¿Necesitas ayuda o tienes comentarios?"
+    },
+    "loveToHear": {
+        "message": "¡Me encantaría saber de ti!"
+    },
+    "email": {
+        "message": "Correo electrónico"
+    },
+    "rateExtension": {
+        "message": "⭐ Calificar en Chrome Web Store"
+    },
+    "rateExtensionFirefox": {
+        "message": "⭐ Calificar en complementos de Firefox"
+    },
+    "save": {
+        "message": "Guardar"
+    },
+    "cancel": {
+        "message": "Cancelar"
+    },
+    "markCompleted": {
+        "message": "Marcar como completado"
+    },
+    "showCompletedOnly": {
+        "message": "Mostrar solo completados"
+    },
+    "ariaLanguageButton": {
+        "message": "Seleccionar idioma {language}"
+    },
+    "ariaCurrentLanguage": {
+        "message": "Idioma actual: {language}"
+    },
+    "ariaTabStudies": {
+        "message": "Ver estudios disponibles"
+    },
+    "ariaTabHistory": {
+        "message": "Ver historial de estudios"
+    },
+    "ariaTabSettings": {
+        "message": "Configurar ajustes de la extensión"
+    },
+    "ariaTabFAQ": {
+        "message": "Preguntas frecuentes"
+    },
+    "ariaTabSupport": {
+        "message": "Información de soporte y contacto"
+    }
+}

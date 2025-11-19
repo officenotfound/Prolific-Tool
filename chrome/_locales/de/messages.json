@@ -1,0 +1,191 @@
+{
+    "extensionName": {
+        "message": "Prolific Tool"
+    },
+    "extensionDescription": {
+        "message": "Browser-Erweiterung für Prolific, um Sie zu benachrichtigen, wenn Studien verfügbar sind"
+    },
+    "studies": {
+        "message": "Studien"
+    },
+    "history": {
+        "message": "Verlauf"
+    },
+    "settings": {
+        "message": "Einstellungen"
+    },
+    "faq": {
+        "message": "FAQ"
+    },
+    "support": {
+        "message": "Unterstützung"
+    },
+    "available": {
+        "message": "Verfügbar"
+    },
+    "potential": {
+        "message": "Potenzial"
+    },
+    "totalSeen": {
+        "message": "Gesamt gesehen"
+    },
+    "completed": {
+        "message": "Abgeschlossen"
+    },
+    "searchStudies": {
+        "message": "Studien suchen..."
+    },
+    "searchHistory": {
+        "message": "Verlauf durchsuchen..."
+    },
+    "noStudies": {
+        "message": "Derzeit keine Studien verfügbar."
+    },
+    "checkBack": {
+        "message": "Schauen Sie bald wieder vorbei oder aktivieren Sie die automatische Aktualisierung!"
+    },
+    "noHistory": {
+        "message": "Noch kein Studienverlauf vorhanden."
+    },
+    "historyWillAppear": {
+        "message": "Studien werden hier angezeigt, sobald Sie sie sehen."
+    },
+    "refreshInterval": {
+        "message": "Aktualisierungsintervall (Sekunden)"
+    },
+    "randomize": {
+        "message": "Zufällig (15s - 60s)"
+    },
+    "enableAutoRefresh": {
+        "message": "Automatische Aktualisierung aktivieren"
+    },
+    "minimumPayRate": {
+        "message": "Mindestvergütung ($/Std.)"
+    },
+    "notificationSound": {
+        "message": "Benachrichtigungston"
+    },
+    "volume": {
+        "message": "Lautstärke"
+    },
+    "testAudio": {
+        "message": "Audio testen"
+    },
+    "showNotifications": {
+        "message": "Benachrichtigungen anzeigen"
+    },
+    "playSound": {
+        "message": "Ton abspielen"
+    },
+    "focusTabOnNewStudy": {
+        "message": "Tab bei neuer Studie fokussieren"
+    },
+    "darkModeProlific": {
+        "message": "Dunkler Modus (Prolific-Website)"
+    },
+    "darkModeProlificDesc": {
+        "message": "Dunkles Design auf der Prolific-Website aktivieren"
+    },
+    "extensionDarkMode": {
+        "message": "Erweiterungs-Dunkelmodus"
+    },
+    "extensionDarkModeDesc": {
+        "message": "Dunkles Design für dieses Erweiterungs-Popup"
+    },
+    "studyFilters": {
+        "message": "Studienfilter"
+    },
+    "minimumPay": {
+        "message": "Mindestvergütung ($)"
+    },
+    "minimumPayDesc": {
+        "message": "Studien unter diesem Betrag ausblenden (in USD)"
+    },
+    "hideUnderOneDollar": {
+        "message": "Studien unter $1 ausblenden"
+    },
+    "useWhitelist": {
+        "message": "Forscher-Whitelist verwenden"
+    },
+    "useWhitelistDesc": {
+        "message": "Wenn aktiviert, nur Studien von Forschern auf der Whitelist anzeigen"
+    },
+    "languageTitle": {
+        "message": "🌐 Sprache"
+    },
+    "selectLanguage": {
+        "message": "Wählen Sie Ihre bevorzugte Sprache"
+    },
+    "english": {
+        "message": "Englisch"
+    },
+    "german": {
+        "message": "Deutsch"
+    },
+    "spanish": {
+        "message": "Spanisch"
+    },
+    "french": {
+        "message": "Französisch"
+    },
+    "portuguese": {
+        "message": "Portugiesisch"
+    },
+    "enjoyingExtension": {
+        "message": "Gefällt Ihnen die Erweiterung?"
+    },
+    "supportMessage": {
+        "message": "Ihre Unterstützung hilft mir, dieses Tool kostenlos und aktuell zu halten. Jeder Beitrag macht einen Unterschied!"
+    },
+    "buyMeCoffee": {
+        "message": "☕ Spendieren Sie mir einen Kaffee"
+    },
+    "needHelp": {
+        "message": "Brauchen Sie Hilfe oder haben Sie Feedback?"
+    },
+    "loveToHear": {
+        "message": "Ich würde gerne von Ihnen hören!"
+    },
+    "email": {
+        "message": "E-Mail"
+    },
+    "rateExtension": {
+        "message": "⭐ Im Chrome Web Store bewerten"
+    },
+    "rateExtensionFirefox": {
+        "message": "⭐ Bei Firefox Add-ons bewerten"
+    },
+    "save": {
+        "message": "Speichern"
+    },
+    "cancel": {
+        "message": "Abbrechen"
+    },
+    "markCompleted": {
+        "message": "Als abgeschlossen markieren"
+    },
+    "showCompletedOnly": {
+        "message": "Nur abgeschlossene anzeigen"
+    },
+    "ariaLanguageButton": {
+        "message": "Sprache {language} auswählen"
+    },
+    "ariaCurrentLanguage": {
+        "message": "Aktuelle Sprache: {language}"
+    },
+    "ariaTabStudies": {
+        "message": "Verfügbare Studien anzeigen"
+    },
+    "ariaTabHistory": {
+        "message": "Studienverlauf anzeigen"
+    },
+    "ariaTabSettings": {
+        "message": "Erweiterungseinstellungen konfigurieren"
+    },
+    "ariaTabFAQ": {
+        "message": "Häufig gestellte Fragen"
+    },
+    "ariaTabSupport": {
+        "message": "Support- und Kontaktinformationen"
+    }
+}
