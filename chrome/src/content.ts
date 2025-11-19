@@ -49,6 +49,9 @@ function handleContentMessages(message: { target: string; type: any; data?: any;
         case "toggle-dark-mode":
             toggleDarkMode(message.data);
             return Promise.resolve();
+        case "toggle-auto-refresh":
+            handleAutoRefreshToggle(message.data);
+            return Promise.resolve();
         default:
             return Promise.resolve();
     }
@@ -111,13 +114,36 @@ async function observeStudyChanges(): Promise<void> {
     const refreshRate = result["refreshRate"];
 
     if (autoRefreshEnabled && refreshRate && refreshRate > 0) {
-        const timer = (result["refreshRate"] ?? 5) * 1000;
-        globalInterval = setInterval(async () => {
-            const node = await waitForElement(targetSelector);
-            if (node && !isProcessing) {
-                await extractAndSendStudies(node);
-            }
-        }, timer);
+        startAutoRefresh(refreshRate);
+    }
+}
+
+function handleAutoRefreshToggle(enable: boolean) {
+    if (enable) {
+        chrome.storage.sync.get(["refreshRate"], (result) => {
+            const refreshRate = result["refreshRate"] ?? 60;
+            startAutoRefresh(refreshRate);
+        });
+    } else {
+        stopAutoRefresh();
+    }
+}
+
+function startAutoRefresh(intervalSeconds: number) {
+    stopAutoRefresh(); // Clear existing first
+    const timer = intervalSeconds * 1000;
+    globalInterval = setInterval(async () => {
+        const node = await waitForElement(targetSelector);
+        if (node && !isProcessing) {
+            await extractAndSendStudies(node);
+        }
+    }, timer);
+}
+
+function stopAutoRefresh() {
+    if (globalInterval !== null) {
+        clearInterval(globalInterval);
+        globalInterval = null;
     }
 }
 
