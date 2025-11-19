@@ -1,0 +1,191 @@
+{
+    "extensionName": {
+        "message": "Prolific Tool"
+    },
+    "extensionDescription": {
+        "message": "Extensão do navegador para Prolific para notificá-lo quando estudos estiverem disponíveis"
+    },
+    "studies": {
+        "message": "Estudos"
+    },
+    "history": {
+        "message": "Histórico"
+    },
+    "settings": {
+        "message": "Configurações"
+    },
+    "faq": {
+        "message": "Perguntas frequentes"
+    },
+    "support": {
+        "message": "Suporte"
+    },
+    "available": {
+        "message": "Disponíveis"
+    },
+    "potential": {
+        "message": "Potencial"
+    },
+    "totalSeen": {
+        "message": "Total vistos"
+    },
+    "completed": {
+        "message": "Concluídos"
+    },
+    "searchStudies": {
+        "message": "Pesquisar estudos..."
+    },
+    "searchHistory": {
+        "message": "Pesquisar no histórico..."
+    },
+    "noStudies": {
+        "message": "Nenhum estudo disponível no momento."
+    },
+    "checkBack": {
+        "message": "Volte em breve ou ative a atualização automática!"
+    },
+    "noHistory": {
+        "message": "Ainda não há histórico de estudos."
+    },
+    "historyWillAppear": {
+        "message": "Os estudos aparecerão aqui conforme você os vir."
+    },
+    "refreshInterval": {
+        "message": "Intervalo de atualização (segundos)"
+    },
+    "randomize": {
+        "message": "Aleatório (15s - 60s)"
+    },
+    "enableAutoRefresh": {
+        "message": "Ativar atualização automática"
+    },
+    "minimumPayRate": {
+        "message": "Taxa mínima de pagamento ($/hora)"
+    },
+    "notificationSound": {
+        "message": "Som de notificação"
+    },
+    "volume": {
+        "message": "Volume"
+    },
+    "testAudio": {
+        "message": "Testar áudio"
+    },
+    "showNotifications": {
+        "message": "Mostrar notificações"
+    },
+    "playSound": {
+        "message": "Reproduzir som"
+    },
+    "focusTabOnNewStudy": {
+        "message": "Focar aba em novo estudo"
+    },
+    "darkModeProlific": {
+        "message": "Modo escuro (site Prolific)"
+    },
+    "darkModeProlificDesc": {
+        "message": "Ativar tema escuro no site Prolific"
+    },
+    "extensionDarkMode": {
+        "message": "Modo escuro da extensão"
+    },
+    "extensionDarkModeDesc": {
+        "message": "Tema escuro para este pop-up da extensão"
+    },
+    "studyFilters": {
+        "message": "Filtros de estudos"
+    },
+    "minimumPay": {
+        "message": "Pagamento mínimo ($)"
+    },
+    "minimumPayDesc": {
+        "message": "Ocultar estudos abaixo deste valor (em USD)"
+    },
+    "hideUnderOneDollar": {
+        "message": "Ocultar estudos abaixo de $1"
+    },
+    "useWhitelist": {
+        "message": "Usar lista branca de pesquisadores"
+    },
+    "useWhitelistDesc": {
+        "message": "Quando ativado, mostrar apenas estudos de pesquisadores na lista branca"
+    },
+    "languageTitle": {
+        "message": "🌐 Idioma"
+    },
+    "selectLanguage": {
+        "message": "Selecione seu idioma preferido"
+    },
+    "english": {
+        "message": "Inglês"
+    },
+    "german": {
+        "message": "Alemão"
+    },
+    "spanish": {
+        "message": "Espanhol"
+    },
+    "french": {
+        "message": "Francês"
+    },
+    "portuguese": {
+        "message": "Português"
+    },
+    "enjoyingExtension": {
+        "message": "Gostando da extensão?"
+    },
+    "supportMessage": {
+        "message": "Seu apoio me ajuda a manter esta ferramenta gratuita e atualizada. Cada contribuição faz a diferença!"
+    },
+    "buyMeCoffee": {
+        "message": "☕ Me pague um café"
+    },
+    "needHelp": {
+        "message": "Precisa de ajuda ou tem feedback?"
+    },
+    "loveToHear": {
+        "message": "Adoraria ouvir de você!"
+    },
+    "email": {
+        "message": "E-mail"
+    },
+    "rateExtension": {
+        "message": "⭐ Avaliar na Chrome Web Store"
+    },
+    "rateExtensionFirefox": {
+        "message": "⭐ Avaliar nos complementos do Firefox"
+    },
+    "save": {
+        "message": "Salvar"
+    },
+    "cancel": {
+        "message": "Cancelar"
+    },
+    "markCompleted": {
+        "message": "Marcar como concluído"
+    },
+    "showCompletedOnly": {
+        "message": "Mostrar apenas concluídos"
+    },
+    "ariaLanguageButton": {
+        "message": "Selecionar idioma {language}"
+    },
+    "ariaCurrentLanguage": {
+        "message": "Idioma atual: {language}"
+    },
+    "ariaTabStudies": {
+        "message": "Ver estudos disponíveis"
+    },
+    "ariaTabHistory": {
+        "message": "Ver histórico de estudos"
+    },
+    "ariaTabSettings": {
+        "message": "Configurar definições da extensão"
+    },
+    "ariaTabFAQ": {
+        "message": "Perguntas frequentes"
+    },
+    "ariaTabSupport": {
+        "message": "Informações de suporte e contato"
+    }
+}

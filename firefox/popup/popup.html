@@ -8,6 +8,7 @@
     <link href="../styles/popup_dark.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="../dist/i18n.js"></script>
+    <script src="../dist/currency.js"></script>
 </head>
 
 <body>
@@ -163,6 +164,49 @@
                     <button class="lang-btn" data-lang="pt" role="radio" aria-checked="false" tabindex="-1">
                         <span class="flag" aria-hidden="true">🇵🇹</span>
                         <span data-i18n="portuguese">Portuguese</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Currency Selector -->
+            <div class="card" style="margin-bottom: 16px;">
+                <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 16px;">💰 Currency Display</h3>
+                <p style="font-size: 12px; color: #5f6368; margin-bottom: 16px;">
+                    Choose your preferred currency for displaying study payments
+                </p>
+
+                <div class="currency-buttons" role="radiogroup" aria-label="Currency selection">
+                    <button class="currency-btn" data-currency="USD" role="radio" aria-checked="true" tabindex="0">
+                        <span class="currency-symbol">$</span>
+                        <span>USD</span>
+                    </button>
+                    <button class="currency-btn" data-currency="CAD" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">CA$</span>
+                        <span>CAD</span>
+                    </button>
+                    <button class="currency-btn" data-currency="GBP" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">£</span>
+                        <span>GBP</span>
+                    </button>
+                    <button class="currency-btn" data-currency="EUR" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">€</span>
+                        <span>EUR</span>
+                    </button>
+                    <button class="currency-btn" data-currency="AUD" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">A$</span>
+                        <span>AUD</span>
+                    </button>
+                    <button class="currency-btn" data-currency="NZD" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">NZ$</span>
+                        <span>NZD</span>
+                    </button>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; color: #5f6368;">
+                    <span id="rate-update-time">Rates updated: Loading...</span>
+                    <button id="refresh-rates-btn" class="btn-text" style="font-size: 11px; padding: 4px 8px;">
+                        🔄 Refresh Rates
                     </button>
                 </div>
             </div>

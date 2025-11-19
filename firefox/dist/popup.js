@@ -61,6 +61,10 @@ document.addEventListener('DOMContentLoaded', async function () {
     await initializeLanguage();
     setupLanguageSwitcher();
 
+    // Initialize currency system
+    await initializeCurrency();
+    setupCurrencySwitcher();
+
     // Load Data
     await loadStudies();
     updateStats();
