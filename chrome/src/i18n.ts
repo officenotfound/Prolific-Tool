@@ -1,10 +1,17 @@
 // Translation System - Accessible i18n Implementation
 
-let currentTranslations = {};
-let currentLanguage = 'en';
+interface Translations {
+    [key: string]: {
+        message: string;
+        description?: string;
+    };
+}
+
+let currentTranslations: Translations = {};
+let currentLanguage: string = 'en';
 
 // Load translations from language file
-async function loadTranslations(lang) {
+async function loadTranslations(lang: string): Promise<Translations> {
     try {
         const response = await fetch(`../_locales/${lang}/messages.json`);
         const translations = await response.json();
@@ -20,7 +27,7 @@ async function loadTranslations(lang) {
 }
 
 // Apply translations to UI elements
-function applyTranslations(translations) {
+function applyTranslations(translations: Translations): void {
     // Translate elements with data-i18n attribute
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
@@ -33,7 +40,7 @@ function applyTranslations(translations) {
     document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
         const key = element.getAttribute('data-i18n-placeholder');
         if (key && translations[key] && translations[key].message) {
-            element.placeholder = translations[key].message;
+            (element as HTMLInputElement).placeholder = translations[key].message;
         }
     });
 
@@ -47,7 +54,7 @@ function applyTranslations(translations) {
 }
 
 // Initialize language system
-async function initializeLanguage() {
+async function initializeLanguage(): Promise<void> {
     // Load saved language preference
     const result = await chrome.storage.sync.get('language');
     currentLanguage = result.language || 'en';
@@ -61,7 +68,7 @@ async function initializeLanguage() {
 }
 
 // Update language button states
-function updateLanguageButtons(lang) {
+function updateLanguageButtons(lang: string): void {
     document.querySelectorAll('.lang-btn').forEach(btn => {
         const btnLang = btn.getAttribute('data-lang');
         const isActive = btnLang === lang;
@@ -78,7 +85,7 @@ function updateLanguageButtons(lang) {
 }
 
 // Switch language
-async function switchLanguage(lang) {
+async function switchLanguage(lang: string): Promise<void> {
     if (!lang) return;
     currentLanguage = lang;
 
@@ -100,7 +107,7 @@ async function switchLanguage(lang) {
 }
 
 // Announce to screen readers (accessibility)
-function announceToScreenReader(message) {
+function announceToScreenReader(message: string): void {
     const announcement = document.createElement('div');
     announcement.setAttribute('role', 'status');
     announcement.setAttribute('aria-live', 'polite');
@@ -115,8 +122,8 @@ function announceToScreenReader(message) {
 }
 
 // Setup language switcher with keyboard navigation
-function setupLanguageSwitcher() {
-    const langButtons = document.querySelectorAll('.lang-btn');
+function setupLanguageSwitcher(): void {
+    const langButtons = document.querySelectorAll('.lang-btn') as NodeListOf<HTMLElement>;
 
     langButtons.forEach((btn, index) => {
         // Click/Enter/Space handler
@@ -126,7 +133,7 @@ function setupLanguageSwitcher() {
         });
 
         // Keyboard navigation
-        btn.addEventListener('keydown', (e) => {
+        btn.addEventListener('keydown', (e: KeyboardEvent) => {
             let targetIndex = index;
 
             switch (e.key) {

@@ -23,199 +23,185 @@
     "support": {
         "message": "Support"
     },
-    "_stats": {
-        "message": "Statistics labels"
-    },
-    "available": {
-        "message": "Available"
-    },
-    "potential": {
-        "message": "Potential"
-    },
-    "totalSeen": {
-        "message": "Total Seen"
-    },
-    "completed": {
-        "message": "Completed"
-    },
-    "_search": {
-        "message": "Search placeholders"
-    },
-    "searchStudies": {
-        "message": "Search studies..."
-    },
-    "searchHistory": {
-        "message": "Search history..."
-    },
-    "_empty": {
-        "message": "Empty state messages"
-    },
-    "noStudies": {
-        "message": "No studies available right now."
-    },
-    "checkBack": {
-        "message": "Check back soon or enable auto-refresh!"
-    },
-    "noHistory": {
-        "message": "No study history yet."
-    },
-    "historyWillAppear": {
-        "message": "Studies will appear here as you see them."
-    },
-    "_settings": {
-        "message": "Settings labels"
-    },
-    "refreshInterval": {
-        "message": "Refresh Interval (seconds)"
-    },
-    "randomize": {
-        "message": "Randomize (15s - 60s)"
-    },
-    "enableAutoRefresh": {
-        "message": "Enable Auto Refresh"
-    },
-    "minimumPayRate": {
-        "message": "Minimum Pay Rate ($/hr)"
-    },
-    "notificationSound": {
-        "message": "Notification Sound"
-    },
-    "volume": {
-        "message": "Volume"
-    },
-    "testAudio": {
-        "message": "Test Audio"
-    },
-    "showNotifications": {
-        "message": "Show Notifications"
-    },
-    "playSound": {
-        "message": "Play Sound"
-    },
-    "focusTabOnNewStudy": {
-        "message": "Focus Tab on New Study"
-    },
-    "darkModeProlific": {
-        "message": "Dark Mode (Prolific Website)"
-    },
-    "darkModeProlificDesc": {
-        "message": "Enable dark theme on Prolific website"
-    },
-    "extensionDarkMode": {
-        "message": "Extension Dark Mode"
-    },
-    "extensionDarkModeDesc": {
-        "message": "Dark theme for this extension popup"
-    },
-    "_filters": {
-        "message": "Study filter labels"
-    },
-    "studyFilters": {
-        "message": "Study Filters"
-    },
-    "minimumPay": {
-        "message": "Minimum Pay ($)"
-    },
-    "minimumPayDesc": {
-        "message": "Hide studies below this amount (in USD)"
-    },
-    "hideUnderOneDollar": {
-        "message": "Hide studies under $1"
-    },
-    "useWhitelist": {
-        "message": "Use Researcher Whitelist"
-    },
-    "useWhitelistDesc": {
-        "message": "When enabled, only show studies from whitelisted researchers"
-    },
-    "_language": {
-        "message": "Language selector"
-    },
-    "languageTitle": {
-        "message": "🌐 Language"
-    },
-    "selectLanguage": {
-        "message": "Select your preferred language"
-    },
-    "english": {
-        "message": "English"
-    },
-    "german": {
-        "message": "German"
-    },
-    "spanish": {
-        "message": "Spanish"
-    },
-    "french": {
-        "message": "French"
-    },
-    "portuguese": {
-        "message": "Portuguese"
-    },
-    "_support": {
-        "message": "Support tab content"
-    },
-    "enjoyingExtension": {
-        "message": "Enjoying the extension?"
-    },
-    "supportMessage": {
-        "message": "Your support helps me keep this tool free and updated. Every contribution makes a difference!"
-    },
-    "buyMeCoffee": {
-        "message": "☕ Buy Me a Coffee"
-    },
-    "needHelp": {
-        "message": "Need Help or Have Feedback?"
-    },
-    "loveToHear": {
-        "message": "I'd love to hear from you!"
-    },
-    "email": {
-        "message": "Email"
-    },
-    "rateExtension": {
-        "message": "⭐ Rate on Chrome Web Store"
-    },
-    "rateExtensionFirefox": {
-        "message": "⭐ Rate on Firefox Add-ons"
-    },
-    "_buttons": {
-        "message": "Button labels"
-    },
-    "save": {
-        "message": "Save"
-    },
-    "cancel": {
-        "message": "Cancel"
-    },
-    "markCompleted": {
-        "message": "Mark as Completed"
-    },
-    "showCompletedOnly": {
-        "message": "Show completed only"
-    },
-    "_accessibility": {
-        "message": "Accessibility labels"
-    },
-    "ariaLanguageButton": {
-        "message": "Select {language} language"
-    },
-    "ariaCurrentLanguage": {
-        "message": "Current language: {language}"
-    },
-    "ariaTabStudies": {
-        "message": "View available studies"
-    },
-    "ariaTabHistory": {
-        "message": "View study history"
-    },
-    "ariaTabSettings": {
-        "message": "Configure extension settings"
-    },
-    "ariaTabFAQ": {
-        "message": "Frequently asked questions"
-    },
-    "ariaTabSupport": {
-        "message": "Support and contact information"
-    }
+},
+"_search": {
+    "message": "Search placeholders"
+},
+"searchStudies": {
+    "message": "Search studies..."
+},
+"searchHistory": {
+    "message": "Search history..."
+},
+"_empty": {
+    "message": "Empty state messages"
+},
+"noStudies": {
+    "message": "No studies available right now."
+},
+"checkBack": {
+    "message": "Check back soon or enable auto-refresh!"
+},
+"noHistory": {
+    "message": "No study history yet."
+},
+"historyWillAppear": {
+    "message": "Studies will appear here as you see them."
+},
+"_settings": {
+    "message": "Settings labels"
+},
+"refreshInterval": {
+    "message": "Refresh Interval (seconds)"
+},
+"randomize": {
+    "message": "Randomize (15s - 60s)"
+},
+"enableAutoRefresh": {
+    "message": "Enable Auto Refresh"
+},
+"minimumPayRate": {
+    "message": "Minimum Pay Rate ($/hr)"
+},
+"notificationSound": {
+    "message": "Notification Sound"
+},
+"volume": {
+    "message": "Volume"
+},
+"testAudio": {
+    "message": "Test Audio"
+},
+"showNotifications": {
+    "message": "Show Notifications"
+},
+"playSound": {
+    "message": "Play Sound"
+},
+"focusTabOnNewStudy": {
+    "message": "Focus Tab on New Study"
+},
+"darkModeProlific": {
+    "message": "Dark Mode (Prolific Website)"
+},
+"darkModeProlificDesc": {
+    "message": "Enable dark theme on Prolific website"
+},
+"extensionDarkMode": {
+    "message": "Extension Dark Mode"
+},
+"extensionDarkModeDesc": {
+    "message": "Dark theme for this extension popup"
+},
+"_filters": {
+    "message": "Study filter labels"
+},
+"studyFilters": {
+    "message": "Study Filters"
+},
+"minimumPay": {
+    "message": "Minimum Pay ($)"
+},
+"minimumPayDesc": {
+    "message": "Hide studies below this amount (in USD)"
+},
+"hideUnderOneDollar": {
+    "message": "Hide studies under $1"
+},
+"useWhitelist": {
+    "message": "Use Researcher Whitelist"
+},
+"useWhitelistDesc": {
+    "message": "When enabled, only show studies from whitelisted researchers"
+},
+"_language": {
+    "message": "Language selector"
+},
+"languageTitle": {
+    "message": "🌐 Language"
+},
+"selectLanguage": {
+    "message": "Select your preferred language"
+},
+"english": {
+    "message": "English"
+},
+"german": {
+    "message": "German"
+},
+"spanish": {
+    "message": "Spanish"
+},
+"french": {
+    "message": "French"
+},
+"portuguese": {
+    "message": "Portuguese"
+},
+"_support": {
+    "message": "Support tab content"
+},
+"enjoyingExtension": {
+    "message": "Enjoying the extension?"
+},
+"supportMessage": {
+    "message": "Your support helps me keep this tool free and updated. Every contribution makes a difference!"
+},
+"buyMeCoffee": {
+    "message": "☕ Buy Me a Coffee"
+},
+"needHelp": {
+    "message": "Need Help or Have Feedback?"
+},
+"loveToHear": {
+    "message": "I'd love to hear from you!"
+},
+"email": {
+    "message": "Email"
+},
+"rateExtension": {
+    "message": "⭐ Rate on Chrome Web Store"
+},
+"rateExtensionFirefox": {
+    "message": "⭐ Rate on Firefox Add-ons"
+},
+"_buttons": {
+    "message": "Button labels"
+},
+"save": {
+    "message": "Save"
+},
+"cancel": {
+    "message": "Cancel"
+},
+"markCompleted": {
+    "message": "Mark as Completed"
+},
+"showCompletedOnly": {
+    "message": "Show completed only"
+},
+"_accessibility": {
+    "message": "Accessibility labels"
+},
+"ariaLanguageButton": {
+    "message": "Select {language} language"
+},
+"ariaCurrentLanguage": {
+    "message": "Current language: {language}"
+},
+"ariaTabStudies": {
+    "message": "View available studies"
+},
+"ariaTabHistory": {
+    "message": "View study history"
+},
+"ariaTabSettings": {
+    "message": "Configure extension settings"
+},
+"ariaTabFAQ": {
+    "message": "Frequently asked questions"
+},
+"ariaTabSupport": {
+    "message": "Support and contact information"
+}
 }

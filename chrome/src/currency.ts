@@ -3,7 +3,7 @@
 
 const SUPPORTED_CURRENCIES = ['USD', 'CAD', 'GBP', 'EUR', 'AUD', 'NZD'];
 
-const CURRENCY_SYMBOLS = {
+const CURRENCY_SYMBOLS: { [key: string]: string } = {
     'USD': '$',
     'CAD': 'CA$',
     'GBP': '£',
@@ -12,7 +12,7 @@ const CURRENCY_SYMBOLS = {
     'NZD': 'NZ$'
 };
 
-const CURRENCY_NAMES = {
+const CURRENCY_NAMES: { [key: string]: string } = {
     'USD': 'US Dollar',
     'CAD': 'Canadian Dollar',
     'GBP': 'British Pound',
@@ -22,7 +22,7 @@ const CURRENCY_NAMES = {
 };
 
 // Fallback rates if API fails (approximate as of 2024)
-const FALLBACK_RATES = {
+const FALLBACK_RATES: { [key: string]: number } = {
     'USD': 1.27,
     'CAD': 1.73,
     'GBP': 1.00,
@@ -33,10 +33,10 @@ const FALLBACK_RATES = {
 
 let currentCurrency = 'USD';
 let exchangeRates = { ...FALLBACK_RATES };
-let lastRateUpdate = null;
+let lastRateUpdate: string | null = null;
 
 // Fetch real-time exchange rates from free API
-async function fetchExchangeRates() {
+async function fetchExchangeRates(): Promise<boolean> {
     try {
         // Using exchangerate-api.com (free tier, no API key needed for basic use)
         const response = await fetch('https://open.er-api.com/v6/latest/GBP');
@@ -49,7 +49,7 @@ async function fetchExchangeRates() {
 
         if (data.result === 'success' && data.rates) {
             // Extract only the currencies we support
-            const newRates = {};
+            const newRates: { [key: string]: number } = {};
             SUPPORTED_CURRENCIES.forEach(currency => {
                 if (data.rates[currency]) {
                     newRates[currency] = data.rates[currency];
@@ -85,7 +85,7 @@ async function fetchExchangeRates() {
 }
 
 // Check if rates need updating (update every 24 hours)
-async function updateRatesIfNeeded() {
+async function updateRatesIfNeeded(): Promise<void> {
     const result = await chrome.storage.local.get('lastRateUpdate');
     const lastUpdate = result.lastRateUpdate ? new Date(result.lastRateUpdate) : null;
 
@@ -102,19 +102,19 @@ async function updateRatesIfNeeded() {
 }
 
 // Convert amount from GBP to target currency
-function convertFromGBP(amountGBP, targetCurrency) {
+function convertFromGBP(amountGBP: number, targetCurrency: string): number {
     const rate = exchangeRates[targetCurrency] || FALLBACK_RATES[targetCurrency] || 1;
     return amountGBP * rate;
 }
 
 // Format currency with appropriate symbol
-function formatCurrency(amount, currency) {
+function formatCurrency(amount: number, currency: string): string {
     const symbol = CURRENCY_SYMBOLS[currency] || '$';
     return `${symbol}${amount.toFixed(2)}`;
 }
 
 // Parse Prolific amount string (e.g., "£5.00" or "$5.00")
-function parseProlificAmount(moneyString) {
+function parseProlificAmount(moneyString: string): number {
     if (!moneyString) return 0;
     const match = moneyString.match(/[£$€]?([\d.]+)/);
     if (match) {
@@ -124,13 +124,13 @@ function parseProlificAmount(moneyString) {
 }
 
 // Get user's selected currency
-async function getUserCurrency() {
+async function getUserCurrency(): Promise<string> {
     const result = await chrome.storage.sync.get('currency');
     return result.currency || 'USD';
 }
 
 // Set user's currency preference
-async function setUserCurrency(currency) {
+async function setUserCurrency(currency: string): Promise<boolean> {
     if (SUPPORTED_CURRENCIES.includes(currency)) {
         currentCurrency = currency;
         await chrome.storage.sync.set({ currency: currency });
@@ -140,7 +140,7 @@ async function setUserCurrency(currency) {
 }
 
 // Initialize currency system
-async function initializeCurrency() {
+async function initializeCurrency(): Promise<void> {
     // Load user preference
     currentCurrency = await getUserCurrency();
 
@@ -155,7 +155,7 @@ async function initializeCurrency() {
 }
 
 // Update currency button states
-function updateCurrencyButtons(currency) {
+function updateCurrencyButtons(currency: string): void {
     document.querySelectorAll('.currency-btn').forEach(btn => {
         const btnCurrency = btn.getAttribute('data-currency');
         const isActive = btnCurrency === currency;
@@ -172,7 +172,7 @@ function updateCurrencyButtons(currency) {
 }
 
 // Display last rate update time
-function displayLastUpdateTime() {
+function displayLastUpdateTime(): void {
     const updateElement = document.getElementById('rate-update-time');
     if (updateElement && lastRateUpdate) {
         const updateDate = new Date(lastRateUpdate);
@@ -190,19 +190,28 @@ function displayLastUpdateTime() {
 }
 
 // Switch currency
-async function switchCurrency(currency) {
+async function switchCurrency(currency: string | null): Promise<void> {
     if (!currency) return;
     await setUserCurrency(currency);
     updateCurrencyButtons(currency);
+
+    // Refresh all displayed amounts
+    // Note: refreshStudyAmounts is not defined in this module, but might be global
+    // In TS we'd need to define it or pass it in. For now, we'll skip it or assume it's handled by popup.ts
+    // if (typeof refreshStudyAmounts === 'function') {
+    //     refreshStudyAmounts();
+    // }
 
     // Announce to screen readers
     const currencyName = CURRENCY_NAMES[currency];
     announceToScreenReader(`Currency changed to ${currencyName}`);
 }
 
+
+
 // Setup currency switcher with keyboard navigation
-function setupCurrencySwitcher() {
-    const currencyButtons = document.querySelectorAll('.currency-btn');
+function setupCurrencySwitcher(): void {
+    const currencyButtons = document.querySelectorAll('.currency-btn') as NodeListOf<HTMLElement>;
 
     currencyButtons.forEach((btn, index) => {
         // Click/Enter/Space handler
@@ -212,7 +221,7 @@ function setupCurrencySwitcher() {
         });
 
         // Keyboard navigation (same as language selector)
-        btn.addEventListener('keydown', (e) => {
+        btn.addEventListener('keydown', (e: KeyboardEvent) => {
             let targetIndex = index;
 
             switch (e.key) {
@@ -255,7 +264,7 @@ function setupCurrencySwitcher() {
     });
 
     // Manual refresh button
-    const refreshBtn = document.getElementById('refresh-rates-btn');
+    const refreshBtn = document.getElementById('refresh-rates-btn') as HTMLButtonElement;
     if (refreshBtn) {
         refreshBtn.addEventListener('click', async () => {
             refreshBtn.disabled = true;

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Prolific Tool Test</title>
+    <link href="../styles/material.css" rel="stylesheet">
+    <link href="../styles/popup_dark.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="mock_chrome.js"></script>
+    <script src="../dist/i18n.js"></script>
+    <script src="../dist/currency.js"></script>
+</head>
+
+<body>
+    <div class="app-bar">
+        <div class="app-title">
+            <img src="../imgs/logo.png" alt="Logo" class="app-logo" onerror="this.style.display='none'">
+            Prolific Tool (Test Mode)
+        </div>
+        <div id="earnings-summary" class="stat-value" style="font-size: 14px; color: white;">£0.00</div>
+    </div>
+
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="studies">Studies</button>
+        <button class="nav-tab" data-tab="history">History</button>
+        <button class="nav-tab" data-tab="settings">Settings</button>
+        <button class="nav-tab" data-tab="faq">FAQ</button>
+        <button class="nav-tab" data-tab="support">Support</button>
+    </nav>
+
+    <div class="content">
+        <!-- Studies Tab -->
+        <div id="studies" class="tab-pane active">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-value" id="studies-count">0</span>
+                    <span class="stat-label">Available</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value" id="total-earnings">£0.00</span>
+                    <span class="stat-label">Potential</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="search-studies" class="form-control" placeholder="Search studies...">
+            </div>
+
+            <div id="studies-container">
+                <!-- Studies will be injected here -->
+            </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history" class="tab-pane">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-value" id="history-count">0</span>
+                    <span class="stat-label">Studies Seen</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="search-history" class="form-control" placeholder="Search history...">
+            </div>
+
+            <div id="history-container">
+                <!-- History items will be injected here -->
+            </div>
+
+            <button id="clear-history" class="btn btn-danger" style="width: 100%; margin-top: 16px;">Clear
+                History</button>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings" class="tab-pane">
+            <div class="card">
+                <div class="form-group">
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="autoRefreshEnabled"> Enable Auto Refresh
+                        </label>
+                    </div>
+                    <label class="form-label">Refresh Interval (seconds)</label>
+                    <input type="number" id="refreshRate" class="form-control" min="15" value="60">
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
+                        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                            <input type="checkbox" id="randomRefresh"> Randomize (15s - 60s)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Minimum Pay Rate (£/hr)</label>
+                    <input type="number" id="minPayRate" class="form-control" min="0" step="0.5" value="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notification Sound</label>
+                    <select id="selectAudio" class="form-control">
+                        <option value="alert1.mp3">Alert 1</option>
+                        <option value="alert2.mp3">Alert 2</option>
+                    </select>
+                    <button id="playAudio" class="btn btn-text" style="margin-top: 8px;">Test Sound</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Volume</label>
+                    <input type="range" id="volume" min="0" max="100" style="width: 100%;">
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="showNotification"> Show Notifications
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="audioActive"> Play Sound
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="focusProlific"> Focus Tab on New Study
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="darkMode"> Dark Mode (Prolific Website)
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="extensionDarkMode"> Extension Dark Mode
+                    </label>
+                </div>
+            </div>
+
+            <!-- Language Selector -->
+            <div class="card" style="margin-bottom: 16px;">
+                <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 16px;" data-i18n="languageTitle">🌐 Language
+                </h3>
+                <div class="language-buttons" role="radiogroup">
+                    <button class="lang-btn" data-lang="en" role="radio" aria-checked="true"><span
+                            class="flag">🇺🇸</span><span data-i18n="english">English</span></button>
+                    <button class="lang-btn" data-lang="de" role="radio" aria-checked="false"><span
+                            class="flag">🇩🇪</span><span data-i18n="german">German</span></button>
+                    <button class="lang-btn" data-lang="es" role="radio" aria-checked="false"><span
+                            class="flag">🇪🇸</span><span data-i18n="spanish">Spanish</span></button>
+                </div>
+            </div>
+
+            <!-- Currency Selector -->
+            <div class="card" style="margin-bottom: 16px;">
+                <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 16px;">💰 Currency Display</h3>
+                <div class="currency-buttons" role="radiogroup">
+                    <button class="currency-btn" data-currency="USD" role="radio" aria-checked="true"><span
+                            class="currency-symbol">$</span><span>USD</span></button>
+                    <button class="currency-btn" data-currency="GBP" role="radio" aria-checked="false"><span
+                            class="currency-symbol">£</span><span>GBP</span></button>
+                    <button class="currency-btn" data-currency="EUR" role="radio" aria-checked="false"><span
+                            class="currency-symbol">€</span><span>EUR</span></button>
+                </div>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; color: #5f6368;">
+                    <span id="rate-update-time">Rates updated: Loading...</span>
+                    <button id="refresh-rates-btn" class="btn-text" style="font-size: 11px; padding: 4px 8px;">🔄
+                        Refresh Rates</button>
+                </div>
+            </div>
+
+            <!-- Study Filters -->
+            <div class="card">
+                <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 16px;">Study Filters</h3>
+                <div class="form-group">
+                    <label class="form-label">Minimum Pay ($)</label>
+                    <input type="number" id="minPay" class="form-control" min="0" step="0.5" value="0">
+                </div>
+                <div class="form-group">
+                    <button id="toggleAutoRefresh" class="btn btn-primary" style="width: 100%;">▶️ Start
+                        Auto-Refresh</button>
+                    <div id="refreshStatus"
+                        style="font-size: 11px; color: #5f6368; margin-top: 8px; text-align: center;">Auto-refresh is
+                        stopped</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- FAQ Tab -->
+        <div id="faq" class="tab-pane">
+            <div id="faq-container"></div>
+        </div>
+
+        <!-- Support Tab -->
+        <div id="support" class="tab-pane">
+            <div class="support-section">
+                <h3>Enjoying the extension?</h3>
+                <a href="#" class="btn btn-primary">☕ Buy Me a Coffee</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="../dist/popup.js"></script>
+</body>
+
+</html>

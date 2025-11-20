@@ -1,0 +1,13 @@
+{
+    "name": "prolific-tool",
+    "version": "0.1.0",
+    "description": "Prolific Tool Extension",
+    "scripts": {
+        "build": "tsc -p chrome/tsconfig.json",
+        "watch": "tsc -w -p chrome/tsconfig.json"
+    },
+    "devDependencies": {
+        "typescript": "^5.0.0",
+        "@types/chrome": "^0.0.260"
+    }
+}

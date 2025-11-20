@@ -1,13 +1,8 @@
-
 // FAQ Data embedded for simplicity - Updated for 2024/2025
 const FAQ_DATA = [
     {
         "question": "What is Prolific?",
         "answer": "Prolific is a platform that connects researchers with participants for academic and industry studies. You earn money by sharing your insights and experiences in research studies."
-    },
-    {
-        "question": "How do I get started?",
-        "answer": "Sign up on Prolific, verify your email and ID (using Onfido), complete 'Your first study' (practice), and fill out your 'About You' demographics. You may be placed on a waitlist initially - this can range from days to months depending on researcher demand for your demographic."
     },
     {
         "question": "How do I get paid?",
@@ -54,8 +49,9 @@ const FAQ_DATA = [
 document.addEventListener('DOMContentLoaded', async function () {
     // Initialize UI
     setupTabs();
-    setupSettings();
+    await setupSettings();
     setupFAQ();
+    setupHistory(); // Initialize History
 
     // Initialize language system (i18n)
     await initializeLanguage();
@@ -67,7 +63,8 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Load Data
     await loadStudies();
-    updateStats();
+    await updateStats();
+    await loadHistory(); // Load History Data
 
     // Clear badge
     chrome.action.setBadgeText({ text: '' });
@@ -86,7 +83,8 @@ function setupTabs() {
 
             // Show corresponding pane
             const tabId = tab.getAttribute('data-tab');
-            document.getElementById(tabId).classList.add('active');
+            const pane = document.getElementById(tabId || '');
+            if (pane) pane.classList.add('active');
         });
     });
 }
@@ -96,7 +94,7 @@ async function setupSettings() {
     const settings = await chrome.storage.sync.get([
         'refreshRate', 'minPayRate', 'audio', 'volume',
         'showNotification', 'audioActive', 'focusProlific', 'autoRefreshEnabled',
-        'minPay', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode'
+        'minPay', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode', 'randomRefresh'
     ]);
 
     // Helper to set input values
@@ -133,51 +131,61 @@ async function setupSettings() {
     // Add event listeners to save on change
     const inputs = ['refreshRate', 'minPayRate', 'volume', 'minPay'];
     inputs.forEach(id => {
-        document.getElementById(id).addEventListener('change', (e) => {
-            chrome.storage.sync.set({ [id]: parseFloat(e.target.value) });
-        });
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('change', (e) => {
+                chrome.storage.sync.set({ [id]: parseFloat(e.target.value) });
+            });
+        }
     });
 
     const checkboxes = ['showNotification', 'audioActive', 'focusProlific', 'randomRefresh', 'darkMode', 'autoRefreshEnabled', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode'];
     checkboxes.forEach(id => {
-        document.getElementById(id).addEventListener('change', (e) => {
-            chrome.storage.sync.set({ [id]: e.target.checked });
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('change', (e) => {
+                const target = e.target;
+                chrome.storage.sync.set({ [id]: target.checked });
 
-            // Toggle disable state of refresh rate input if random is checked
-            if (id === 'randomRefresh') {
-                document.getElementById('refreshRate').disabled = e.target.checked;
-            }
-
-            // Toggle disable state of refresh inputs if auto-refresh is unchecked
-            if (id === 'autoRefreshEnabled') {
-                const isEnabled = e.target.checked;
-                document.getElementById('refreshRate').disabled = !isEnabled || settings.randomRefresh;
-                document.getElementById('randomRefresh').disabled = !isEnabled;
-                updateAutoRefreshStatus(isEnabled);
-            }
-
-            // Toggle dark mode on Prolific website
-            if (id === 'darkMode') {
-                chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                    if (tabs[0]) {
-                        chrome.tabs.sendMessage(tabs[0].id, {
-                            target: 'content',
-                            type: 'toggle-dark-mode',
-                            data: e.target.checked
-                        });
-                    }
-                });
-            }
-
-            // Toggle extension dark mode
-            if (id === 'extensionDarkMode') {
-                if (e.target.checked) {
-                    document.body.classList.add('extension-dark-mode');
-                } else {
-                    document.body.classList.remove('extension-dark-mode');
+                // Toggle disable state of refresh rate input if random is checked
+                if (id === 'randomRefresh') {
+                    const refreshRateInput = document.getElementById('refreshRate');
+                    if (refreshRateInput) refreshRateInput.disabled = target.checked;
                 }
-            }
-        });
+
+                // Toggle disable state of refresh inputs if auto-refresh is unchecked
+                if (id === 'autoRefreshEnabled') {
+                    const isEnabled = target.checked;
+                    const refreshRateInput = document.getElementById('refreshRate');
+                    const randomRefreshInput = document.getElementById('randomRefresh');
+                    if (refreshRateInput) refreshRateInput.disabled = !isEnabled || settings.randomRefresh;
+                    if (randomRefreshInput) randomRefreshInput.disabled = !isEnabled;
+                    updateAutoRefreshStatus(isEnabled);
+                }
+
+                // Toggle dark mode on Prolific website
+                if (id === 'darkMode') {
+                    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+                        if (tabs[0] && tabs[0].id) {
+                            chrome.tabs.sendMessage(tabs[0].id, {
+                                target: 'content',
+                                type: 'toggle-dark-mode',
+                                data: target.checked
+                            });
+                        }
+                    });
+                }
+
+                // Toggle extension dark mode
+                if (id === 'extensionDarkMode') {
+                    if (target.checked) {
+                        document.body.classList.add('extension-dark-mode');
+                    } else {
+                        document.body.classList.remove('extension-dark-mode');
+                    }
+                }
+            });
+        }
     });
 
     // Auto-Refresh Start/Stop Button
@@ -185,7 +193,7 @@ async function setupSettings() {
     const refreshStatus = document.getElementById('refreshStatus');
     let isRefreshRunning = false;
 
-    if (toggleButton) {
+    if (toggleButton && refreshStatus) {
         toggleButton.addEventListener('click', async () => {
             const enableAutoRefresh = document.getElementById('autoRefreshEnabled').checked;
 
@@ -216,7 +224,7 @@ async function setupSettings() {
 
             // Send message to content script to start/stop refresh
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                if (tabs[0]) {
+                if (tabs[0] && tabs[0].id) {
                     chrome.tabs.sendMessage(tabs[0].id, {
                         target: 'content',
                         type: 'toggle-auto-refresh',
@@ -241,26 +249,34 @@ async function setupSettings() {
 
     // Initial state for refresh rate input
     const autoRefreshEnabled = settings.autoRefreshEnabled !== undefined ? settings.autoRefreshEnabled : false;
-    document.getElementById('refreshRate').disabled = !autoRefreshEnabled || settings.randomRefresh;
-    document.getElementById('randomRefresh').disabled = !autoRefreshEnabled;
+    const refreshRateInput = document.getElementById('refreshRate');
+    const randomRefreshInput = document.getElementById('randomRefresh');
+    if (refreshRateInput) refreshRateInput.disabled = !autoRefreshEnabled || settings.randomRefresh;
+    if (randomRefreshInput) randomRefreshInput.disabled = !autoRefreshEnabled;
     updateAutoRefreshStatus(autoRefreshEnabled);
 
-    document.getElementById('selectAudio').addEventListener('change', (e) => {
-        chrome.storage.sync.set({ audio: e.target.value });
-    });
+    const selectAudio = document.getElementById('selectAudio');
+    if (selectAudio) {
+        selectAudio.addEventListener('change', (e) => {
+            chrome.storage.sync.set({ audio: e.target.value });
+        });
+    }
 
     // Test Audio
-    document.getElementById('playAudio').addEventListener('click', async () => {
-        const audio = document.getElementById('selectAudio').value;
-        const volume = document.getElementById('volume').value / 100;
+    const playAudioBtn = document.getElementById('playAudio');
+    if (playAudioBtn) {
+        playAudioBtn.addEventListener('click', async () => {
+            const audio = document.getElementById('selectAudio').value;
+            const volume = parseFloat(document.getElementById('volume').value) / 100;
 
-        // Send message to background to play sound (using offscreen)
-        await chrome.runtime.sendMessage({
-            type: 'play-sound',
-            target: 'background',
-            data: { audio, volume } // Pass data if supported by background handler
+            // Send message to background to play sound (using offscreen)
+            await chrome.runtime.sendMessage({
+                type: 'play-sound',
+                target: 'background',
+                data: { audio, volume } // Pass data if supported by background handler
+            });
         });
-    });
+    }
 }
 
 function updateAutoRefreshStatus(isEnabled) {
@@ -272,6 +288,8 @@ function updateAutoRefreshStatus(isEnabled) {
 
 function setupFAQ() {
     const container = document.getElementById('faq-container');
+    if (!container) return;
+
     FAQ_DATA.forEach(item => {
         const div = document.createElement('div');
         div.className = 'faq-item';
@@ -283,11 +301,14 @@ function setupFAQ() {
             <div class="faq-answer">${item.answer}</div>
         `;
 
-        div.querySelector('.faq-question').addEventListener('click', () => {
-            div.classList.toggle('open');
-            const arrow = div.querySelector('span');
-            arrow.textContent = div.classList.contains('open') ? '▲' : '▼';
-        });
+        const question = div.querySelector('.faq-question');
+        if (question) {
+            question.addEventListener('click', () => {
+                div.classList.toggle('open');
+                const arrow = div.querySelector('span');
+                if (arrow) arrow.textContent = div.classList.contains('open') ? '▲' : '▼';
+            });
+        }
 
         container.appendChild(div);
     });
@@ -300,9 +321,10 @@ async function loadStudies() {
     const countEl = document.getElementById('studies-count');
     const searchInput = document.getElementById('search-studies');
 
-    countEl.textContent = studies.length;
+    if (countEl) countEl.textContent = studies.length.toString();
 
     const render = async (list) => {
+        if (!container) return;
         container.innerHTML = '';
         if (list.length === 0) {
             const settings = await chrome.storage.sync.get('autoRefreshEnabled');
@@ -319,29 +341,60 @@ async function loadStudies() {
         list.forEach(study => {
             const card = document.createElement('div');
             card.className = 'card study-card';
-            card.innerHTML = `
-                <div class="study-header">
-                    <h3 class="study-title">${study.title || 'Untitled Study'}</h3>
-                    <span class="study-researcher">${study.researcher || 'Unknown Researcher'}</span>
-                </div>
-                <div class="study-details">
-                    <div class="detail-item">
-                        <span class="detail-label">Pay:</span>
-                        <span class="detail-value">${study.reward || 'N/A'}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Rate:</span>
-                        <span class="detail-value">${study.rewardPerHour || 'N/A'}/hr</span>
-                    </div>
-                    <div class="detail-item">
-                        <span class="detail-label">Time:</span>
-                        <span class="detail-value">${study.time || 'N/A'}</span>
-                    </div>
-                </div>
-                <div class="study-actions">
-                    <a href="https://app.prolific.com/studies/${study.id}" target="_blank" class="btn btn-primary">Open Study</a>
-                </div>
-            `;
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'study-header';
+
+            const title = document.createElement('h3');
+            title.className = 'study-title';
+            title.textContent = study.title || 'Untitled Study';
+
+            const researcher = document.createElement('span');
+            researcher.className = 'study-researcher';
+            researcher.textContent = study.researcher || 'Unknown Researcher';
+
+            header.appendChild(title);
+            header.appendChild(researcher);
+
+            // Details
+            const details = document.createElement('div');
+            details.className = 'study-details';
+
+            const createDetail = (label, value, style) => {
+                const item = document.createElement('div');
+                item.className = 'detail-item';
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'detail-label';
+                labelSpan.textContent = label;
+                const valueSpan = document.createElement('span');
+                valueSpan.className = 'detail-value';
+                valueSpan.textContent = value;
+                if (style) valueSpan.style.cssText = style;
+                item.appendChild(labelSpan);
+                item.appendChild(valueSpan);
+                return item;
+            };
+
+            details.appendChild(createDetail('Pay:', study.reward || 'N/A'));
+            details.appendChild(createDetail('Rate:', `${study.rewardPerHour || 'N/A'}/hr`));
+            details.appendChild(createDetail('Time:', study.time || 'N/A'));
+
+            // Actions
+            const actions = document.createElement('div');
+            actions.className = 'study-actions';
+
+            const link = document.createElement('a');
+            link.href = `https://app.prolific.com/studies/${study.id}`;
+            link.target = '_blank';
+            link.className = 'btn btn-primary';
+            link.textContent = 'Open Study';
+
+            actions.appendChild(link);
+
+            card.appendChild(header);
+            card.appendChild(details);
+            card.appendChild(actions);
             container.appendChild(card);
         });
     };
@@ -350,36 +403,201 @@ async function loadStudies() {
     render(studies);
 
     // Search functionality
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase();
-        const filtered = studies.filter(s =>
-            (s.title && s.title.toLowerCase().includes(term)) ||
-            (s.researcher && s.researcher.toLowerCase().includes(term))
-        );
-        render(filtered);
-    });
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = studies.filter(s =>
+                (s.title && s.title.toLowerCase().includes(term)) ||
+                (s.researcher && s.researcher.toLowerCase().includes(term))
+            );
+            render(filtered);
+        });
+    }
 }
 
 async function updateStats() {
     const result = await chrome.storage.local.get("currentStudies");
     const studies = result.currentStudies || [];
+    const currency = await getUserCurrency();
 
-    let total = 0;
+    let totalGBP = 0;
     studies.forEach(s => {
-        // Parse reward string like "£1.50" or "$2.00"
         if (s.reward) {
             const val = parseFloat(s.reward.replace(/[^0-9.]/g, ''));
             if (!isNaN(val)) {
-                // Simple assumption: if it contains $, convert to £ roughly or just sum raw numbers
-                // The original code had a helper for this, we'll simplify for now or try to match logic
-                // Original: if $ multiply by 0.8.
-                if (s.reward.includes('$')) total += val * 0.8;
-                else total += val;
+                // Prolific usually pays in GBP, but sometimes USD.
+                // If it's USD ($), convert to approx GBP (0.8) for the base sum.
+                // If it's GBP (£) or anything else (default), treat as GBP.
+                if (s.reward.includes('$')) totalGBP += val * 0.8;
+                else totalGBP += val;
             }
         }
     });
 
-    const formatted = `£${total.toFixed(2)}`;
-    document.getElementById('total-earnings').textContent = formatted;
-    document.getElementById('earnings-summary').textContent = formatted;
+    const convertedTotal = convertFromGBP(totalGBP, currency);
+    const formatted = formatCurrency(convertedTotal, currency);
+
+    const totalEarnings = document.getElementById('total-earnings');
+    const earningsSummary = document.getElementById('earnings-summary');
+    if (totalEarnings) totalEarnings.textContent = formatted;
+    if (earningsSummary) earningsSummary.textContent = formatted;
+}
+
+// --- History Logic ---
+
+function setupHistory() {
+    const clearBtn = document.getElementById('clear-history');
+    if (clearBtn) {
+        clearBtn.addEventListener('click', async () => {
+            if (confirm('Are you sure you want to clear your study history?')) {
+                await chrome.storage.local.set({ studyHistory: { studies: [], lastUpdated: new Date().toISOString() } });
+                await loadHistory();
+            }
+        });
+    }
+}
+
+async function loadHistory() {
+    const result = await chrome.storage.local.get("studyHistory");
+    const history = result.studyHistory || { studies: [], lastUpdated: new Date().toISOString() };
+    const studies = history.studies.reverse(); // Show newest first
+    const container = document.getElementById('history-container');
+    const countEl = document.getElementById('history-count');
+    const searchInput = document.getElementById('search-history');
+
+    if (countEl) countEl.textContent = studies.length.toString();
+
+    const render = (list) => {
+        if (!container) return;
+        container.innerHTML = '';
+        if (list.length === 0) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">📜</div>
+                    <div>No study history yet.</div>
+                </div>`;
+            return;
+        }
+
+        list.forEach(study => {
+            const card = document.createElement('div');
+            card.className = 'card study-card';
+            if (study.completed) {
+                card.classList.add('completed-study');
+                card.style.opacity = '0.7';
+            }
+
+            const lastSeen = study.lastSeen ? new Date(study.lastSeen).toLocaleString() : 'Unknown';
+
+            // Header
+            const header = document.createElement('div');
+            header.className = 'study-header';
+
+            const title = document.createElement('h3');
+            title.className = 'study-title';
+            title.textContent = study.title || 'Untitled Study';
+
+            if (study.completed) {
+                const badge = document.createElement('span');
+                badge.style.cssText = 'background:#e6fffa; color:#00796b; padding:2px 6px; border-radius:4px; font-size:10px; margin-left: 8px;';
+                badge.textContent = 'Completed';
+                title.appendChild(badge);
+            }
+
+            const researcher = document.createElement('span');
+            researcher.className = 'study-researcher';
+            researcher.textContent = study.researcher || 'Unknown Researcher';
+
+            header.appendChild(title);
+            header.appendChild(researcher);
+
+            // Details
+            const details = document.createElement('div');
+            details.className = 'study-details';
+
+            const createDetail = (label, value, style) => {
+                const item = document.createElement('div');
+                item.className = 'detail-item';
+                const labelSpan = document.createElement('span');
+                labelSpan.className = 'detail-label';
+                labelSpan.textContent = label;
+                const valueSpan = document.createElement('span');
+                valueSpan.className = 'detail-value';
+                valueSpan.textContent = value;
+                if (style) valueSpan.style.cssText = style;
+                item.appendChild(labelSpan);
+                item.appendChild(valueSpan);
+                return item;
+            };
+
+            details.appendChild(createDetail('Pay:', study.reward || 'N/A'));
+            details.appendChild(createDetail('Last Seen:', lastSeen, 'font-size: 10px;'));
+
+            // Actions
+            const actions = document.createElement('div');
+            actions.className = 'study-actions';
+            actions.style.cssText = 'display: flex; gap: 8px;';
+
+            const link = document.createElement('a');
+            link.href = `https://app.prolific.com/studies/${study.id}`;
+            link.target = '_blank';
+            link.className = 'btn btn-primary';
+            link.style.flex = '1';
+            link.textContent = 'Open';
+            actions.appendChild(link);
+
+            if (!study.completed) {
+                const doneBtn = document.createElement('button');
+                doneBtn.className = 'btn btn-secondary mark-complete-btn';
+                doneBtn.setAttribute('data-id', study.id);
+                doneBtn.style.cssText = 'flex: 1; padding: 4px;';
+                doneBtn.textContent = 'Done';
+                actions.appendChild(doneBtn);
+            }
+
+            card.appendChild(header);
+            card.appendChild(details);
+            card.appendChild(actions);
+            container.appendChild(card);
+        });
+
+        // Add event listeners for Mark Complete buttons
+        document.querySelectorAll('.mark-complete-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                const id = e.target.getAttribute('data-id');
+                if (id) {
+                    await markStudyCompleted(id);
+                    await loadHistory(); // Reload to update UI
+                }
+            });
+        });
+    };
+
+    // Initial render
+    render(studies);
+
+    // Search functionality
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = studies.filter(s =>
+                (s.title && s.title.toLowerCase().includes(term)) ||
+                (s.researcher && s.researcher.toLowerCase().includes(term))
+            );
+            render(filtered);
+        });
+    }
+}
+
+async function markStudyCompleted(studyId) {
+    const result = await chrome.storage.local.get("studyHistory");
+    let history = result.studyHistory || { studies: [], lastUpdated: new Date().toISOString() };
+
+    const index = history.studies.findIndex(s => s.id === studyId);
+    if (index !== -1) {
+        history.studies[index].completed = true;
+        history.studies[index].completedDate = new Date().toISOString();
+        history.studies[index].status = 'approved'; // Assume approved/completed for now
+        await chrome.storage.local.set({ studyHistory: history });
+    }
 }

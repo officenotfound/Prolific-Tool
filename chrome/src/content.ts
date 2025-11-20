@@ -1,32 +1,9 @@
-type StudyContent = {
-    id: string | null;
-    title: string | null;
-    researcher: string | null;
-    reward: string | null;
-    rewardPerHour: string | null;
-    time: string | null;
-    timeInMinutes: number | null;
-    createdAt: string | null;
-    // History tracking fields
-    firstSeen?: string;
-    lastSeen?: string;
-    clicked?: boolean;
-    completed?: boolean;
-    completedDate?: string | null;
-    actualPay?: number | null;
-    status?: 'pending' | 'approved' | 'rejected';
-};
-
-type StudyHistory = {
-    studies: StudyContent[];
-    lastUpdated: string;
-};
+/// <reference types="chrome"/>
 
 const targetSelector = 'div[data-testid="studies-list"]';
 let globalObserver: MutationObserver | null = null;
-let globalInterval: number | null = null;
-let isProcessing: boolean = false;
-
+let globalInterval: any = null;
+let isProcessing = false;
 const NUMBER_OF_STUDIES_TO_STORE = 100;
 const REWARD = "reward";
 const REWARD_PER_HOUR = "rewardPerHour";
@@ -34,7 +11,25 @@ const TIME = 'time';
 const NAME_BLACKLIST = "nameBlacklist";
 const RESEARCHER_BLACKLIST = "researcherBlacklist";
 
-function handleContentMessages(message: { target: string; type: any; data?: any; }): Promise<void> {
+interface Study {
+    id: string;
+    title: string;
+    researcher: string;
+    reward: string;
+    rewardPerHour: string;
+    time: string;
+    timeInMinutes?: number;
+    createdAt: string;
+    completed?: boolean;
+    lastSeen?: string;
+    firstSeen?: string;
+    clicked?: boolean;
+    completedDate?: string | null;
+    actualPay?: string | null;
+    status?: string;
+}
+
+function handleContentMessages(message: any): Promise<void> {
     if (message.target !== "content" && message.target !== 'everything') {
         return Promise.resolve();
     }
@@ -42,7 +37,8 @@ function handleContentMessages(message: { target: string; type: any; data?: any;
         case "change-alert-type":
             if (message.data === "website") {
                 observeStudyChanges();
-            } else {
+            }
+            else {
                 disconnectObserver();
             }
             return Promise.resolve();
@@ -57,14 +53,13 @@ function handleContentMessages(message: { target: string; type: any; data?: any;
     }
 }
 
-function isObserverActive(): boolean {
+function isObserverActive() {
     return globalObserver !== null;
 }
 
 function disconnectObserver() {
     globalObserver?.disconnect();
     globalObserver = null;
-
     if (globalInterval !== null) {
         clearInterval(globalInterval);
         globalInterval = null;
@@ -85,34 +80,29 @@ async function initDarkMode() {
 function toggleDarkMode(enable: boolean) {
     if (enable) {
         document.body.classList.add("prolific-dark-mode");
-    } else {
+    }
+    else {
         document.body.classList.remove("prolific-dark-mode");
     }
 }
 
-async function observeStudyChanges(): Promise<void> {
-    if (isObserverActive()) return;
-
+async function observeStudyChanges() {
+    if (isObserverActive())
+        return;
     globalObserver = new MutationObserver(async (mutationsList) => {
         const targetNode = document.querySelector(targetSelector);
-        if (!targetNode || isProcessing) return;
-
-        const hasChanges = mutationsList.some(mutation =>
-            mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0 || mutation.type === 'childList'
-        );
-
+        if (!targetNode || isProcessing)
+            return;
+        const hasChanges = mutationsList.some(mutation => mutation.addedNodes.length > 0 || mutation.removedNodes.length > 0 || mutation.type === 'childList');
         if (hasChanges) {
-            await extractAndSendStudies(targetNode);
+            await extractAndSendStudies(targetNode as HTMLElement);
         }
     });
-
     globalObserver.observe(document.body, { childList: true, subtree: true });
-
     // Setup polling fallback
     const result = await chrome.storage.sync.get(["refreshRate", "autoRefreshEnabled"]);
     const autoRefreshEnabled = result["autoRefreshEnabled"] !== undefined ? result["autoRefreshEnabled"] : false;
     const refreshRate = result["refreshRate"];
-
     if (autoRefreshEnabled && refreshRate && refreshRate > 0) {
         startAutoRefresh(refreshRate);
     }
@@ -124,7 +114,8 @@ function handleAutoRefreshToggle(enable: boolean) {
             const refreshRate = result["refreshRate"] ?? 60;
             startAutoRefresh(refreshRate);
         });
-    } else {
+    }
+    else {
         stopAutoRefresh();
     }
 }
@@ -135,7 +126,7 @@ function startAutoRefresh(intervalSeconds: number) {
     globalInterval = setInterval(async () => {
         const node = await waitForElement(targetSelector);
         if (node && !isProcessing) {
-            await extractAndSendStudies(node);
+            await extractAndSendStudies(node as HTMLElement);
         }
     }, timer);
 }
@@ -147,9 +138,10 @@ function stopAutoRefresh() {
     }
 }
 
-async function extractAndSendStudies(targetNode: Element): Promise<void> {
+async function extractAndSendStudies(targetNode: HTMLElement) {
     try {
-        if (isProcessing) return;
+        if (isProcessing)
+            return;
         isProcessing = true;
         const studies = await extractStudies(targetNode);
         if (studies.length > 0) {
@@ -159,7 +151,8 @@ async function extractAndSendStudies(targetNode: Element): Promise<void> {
                 data: studies,
             });
         }
-    } finally {
+    }
+    finally {
         isProcessing = false;
     }
 }
@@ -182,7 +175,7 @@ async function waitForElement(selector: string): Promise<Element | null> {
     });
 }
 
-function getFloatValueFromMoneyStringContent(value: string, currency: string = 'USD', rates: any = {}): number {
+function getFloatValueFromMoneyStringContent(value: string, currency = 'USD', rates: any = {}) {
     const firstWord = value.split(" ")[0];
     const amount = parseFloat(firstWord.replace(/[£$€]/g, ""));
 
@@ -191,28 +184,25 @@ function getFloatValueFromMoneyStringContent(value: string, currency: string = '
     // Base currency is GBP (Prolific default)
     let gbpAmount = amount;
     if (firstWord.includes('$')) {
-        // If already USD (some studies might be), convert back to GBP first if needed, or just treat as USD
-        // For simplicity, let's assume input is usually GBP from Prolific
-        // If input is $, assume it's approx 0.8 GBP
         gbpAmount = amount * 0.8;
     } else if (firstWord.includes('€')) {
-        gbpAmount = amount * 0.85; // Approx
+        gbpAmount = amount * 0.85;
     }
 
     if (currency === 'GBP') return gbpAmount;
 
-    const rate = rates[currency] || 1.27; // Default to USD rate if missing
+    const rate = rates[currency] || 1.27;
     return gbpAmount * rate;
 }
 
-function formatCurrency(amount: number, currency: string): string {
+function formatCurrency(amount: number, currency: string) {
     const symbols: { [key: string]: string } = {
         'USD': '$', 'GBP': '£', 'EUR': '€', 'CAD': 'C$', 'AUD': 'A$', 'NZD': 'NZ$'
     };
     return `${symbols[currency] || '$'}${amount.toFixed(2)}`;
 }
 
-async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
+async function extractStudies(targetNode: HTMLElement): Promise<Study[]> {
     const studyElements = targetNode.querySelectorAll("li[class='list-item']");
     const storageValues = await chrome.storage.sync.get([
         "trackIds",
@@ -236,29 +226,28 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     const currency = storageValues["currency"] || "USD";
     const rates = localValues["exchangeRates"] || {};
 
-    const shouldIgnoreOldStudies: boolean = storageValues["trackIds"] ?? true;
+    const shouldIgnoreOldStudies = storageValues["trackIds"] ?? true;
     if (!studyElements || studyElements.length === 0) {
         if (!shouldIgnoreOldStudies) {
             await chrome.storage.local.set({ ["currentStudies"]: [] });
         }
         return [];
     }
-
-    let studies: StudyContent[] = [];
+    let studies: Study[] = [];
     const numberOfStudiesToStore = storageValues["studyHistoryLen"] ?? NUMBER_OF_STUDIES_TO_STORE;
-    let savedStudies: StudyContent[] = localValues["currentStudies"] ?? [];
-    const rewardFilter: number = storageValues[REWARD] ?? 0;
-    const rewardPerHourFilter: number = storageValues[REWARD_PER_HOUR] ?? 0;
-    const time: number = storageValues[TIME] ?? 0;
-    const nameBlacklist: string[] = storageValues[NAME_BLACKLIST] ?? [];
-    const researcherBlacklist: string[] = storageValues[RESEARCHER_BLACKLIST] ?? [];
-    const minPay: number = storageValues["minPay"] ?? 0;
-    const hideUnderOneDollar: boolean = storageValues["hideUnderOneDollar"] ?? false;
-    const useWhitelist: boolean = storageValues["useWhitelist"] ?? false;
-    const researcherWhitelist: string[] = storageValues["researcherWhitelist"] ?? [];
+    let savedStudies: Study[] = localValues["currentStudies"] ?? [];
+    const rewardFilter = storageValues[REWARD] ?? 0;
+    const rewardPerHourFilter = storageValues[REWARD_PER_HOUR] ?? 0;
+    const time = storageValues[TIME] ?? 0;
+    const nameBlacklist = storageValues[NAME_BLACKLIST] ?? [];
+    const researcherBlacklist = storageValues[RESEARCHER_BLACKLIST] ?? [];
+    const minPay = storageValues["minPay"] ?? 0;
+    const hideUnderOneDollar = storageValues["hideUnderOneDollar"] ?? false;
+    const useWhitelist = storageValues["useWhitelist"] ?? false;
+    const researcherWhitelist = storageValues["researcherWhitelist"] ?? [];
     const studyIds = savedStudies.map((study) => study.id);
 
-    function shouldIncludeStudy(study: StudyContent) {
+    function shouldIncludeStudy(study: Study) {
         // Convert study reward to selected currency for filtering
         const studyReward = getFloatValueFromMoneyStringContent(study.reward || "0", currency, rates);
         const studyHourly = getFloatValueFromMoneyStringContent(study.rewardPerHour || "0", currency, rates);
@@ -266,24 +255,20 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
         // Existing filters
         if (rewardFilter && studyReward < rewardFilter) return false;
         if (time && study.timeInMinutes && study.timeInMinutes < time) return false;
-        if (nameBlacklist.some((name) => study.title?.toLowerCase().includes(name))) return false;
-        if (researcherBlacklist.some((researcher) => study.researcher?.toLowerCase().includes(researcher))) return false;
+        if (nameBlacklist.some((name: string) => study.title?.toLowerCase().includes(name))) return false;
+        if (researcherBlacklist.some((researcher: string) => study.researcher?.toLowerCase().includes(researcher))) return false;
         if (rewardPerHourFilter && studyHourly < rewardPerHourFilter) return false;
 
         // NEW FILTERS
         if (minPay > 0 && studyReward < minPay) return false;
 
-        // Quick filter: Hide studies under 1 unit of selected currency
         if (hideUnderOneDollar && studyReward < 1.0) return false;
 
         if (useWhitelist && researcherWhitelist.length > 0) {
             const researcherName = study.researcher?.toLowerCase() ?? "";
-            const isWhitelisted = researcherWhitelist.some((researcher) =>
-                researcherName.includes(researcher.toLowerCase())
-            );
+            const isWhitelisted = researcherWhitelist.some((researcher: string) => researcherName.includes(researcher.toLowerCase()));
             if (!isWhitelisted) return false;
         }
-
         return true;
     }
 
@@ -293,9 +278,10 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
 
     studyElements.forEach((study) => {
         const id = study.getAttribute("data-testid")?.split("-")[1];
-        if (!id || studyIds?.includes(id)) return;
-        const title = getTextContent(study, '[data-testid="title"]');
-        const researcher = getTextContent(study, '[data-testid="host"]')?.split(" ").slice(1).join(" ") || null;
+        if (!id || studyIds?.includes(id))
+            return;
+        const title = getTextContent(study, '[data-testid="title"]') || "";
+        const researcher = getTextContent(study, '[data-testid="host"]')?.split(" ").slice(1).join(" ") || "";
 
         // Get raw text (usually GBP)
         const rawReward = getTextContent(study, '[data-testid="study-tag-reward"]');
@@ -308,7 +294,7 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
         const reward = formatCurrency(rewardVal, currency);
         const rewardPerHour = formatCurrency(hourlyVal, currency);
 
-        const time = getTextContent(study, '[data-testid="study-tag-completion-time"]');
+        const time = getTextContent(study, '[data-testid="study-tag-completion-time"]') || "";
         const timeInMinutes = parseTimeContent(time);
         studies.push({
             id,
@@ -325,13 +311,11 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     if (shouldFilterStudies()) {
         studies = studies.filter((study) => shouldIncludeStudy(study));
     }
-
-    // PHASE 2: Log studies to history
     await logStudiesToHistory(studies);
-
     if (shouldIgnoreOldStudies) {
         savedStudies = [...savedStudies, ...studies];
-    } else {
+    }
+    else {
         savedStudies = studies;
     }
     if (savedStudies.length > numberOfStudiesToStore) {
@@ -340,6 +324,63 @@ async function extractStudies(targetNode: Element): Promise<StudyContent[]> {
     if (studies.length > 0) {
         await chrome.storage.local.set({ "currentStudies": savedStudies });
     }
-
     return studies;
+}
+
+async function logStudiesToHistory(newStudies: Study[]) {
+    if (newStudies.length === 0)
+        return;
+    const historyData = await chrome.storage.local.get("studyHistory");
+    let history = historyData["studyHistory"] || { studies: [], lastUpdated: new Date().toISOString() };
+    const now = new Date().toISOString();
+    newStudies.forEach(newStudy => {
+        if (!newStudy.id)
+            return;
+        const existingIndex = history.studies.findIndex((s: Study) => s.id === newStudy.id);
+        if (existingIndex >= 0) {
+            history.studies[existingIndex].lastSeen = now;
+            history.studies[existingIndex] = {
+                ...newStudy,
+                firstSeen: history.studies[existingIndex].firstSeen,
+                lastSeen: now,
+                clicked: history.studies[existingIndex].clicked,
+                completed: history.studies[existingIndex].completed,
+                completedDate: history.studies[existingIndex].completedDate,
+                actualPay: history.studies[existingIndex].actualPay,
+                status: history.studies[existingIndex].status
+            };
+        }
+        else {
+            history.studies.push({
+                ...newStudy,
+                firstSeen: now,
+                lastSeen: now,
+                clicked: false,
+                completed: false,
+                completedDate: null,
+                actualPay: null,
+                status: 'pending'
+            });
+        }
+    });
+    const maxHistorySize = 500;
+    if (history.studies.length > maxHistorySize) {
+        history.studies = history.studies.slice(-maxHistorySize);
+    }
+    history.lastUpdated = now;
+    await chrome.storage.local.set({ "studyHistory": history });
+}
+
+function getTextContent(element: Element | null, selector: string): string | null {
+    return element?.querySelector(selector)?.textContent || null;
+}
+
+function parseTimeContent(value: string | null): number {
+    if (!value)
+        return 0;
+    const hourMatch = value.match(/(\d+)\s*hour/);
+    const minMatch = value.match(/(\d+)\s*min/);
+    const hours = hourMatch ? parseInt(hourMatch[1], 10) : 0;
+    const minutes = minMatch ? parseInt(minMatch[1], 10) : 0;
+    return hours * 60 + minutes;
 }

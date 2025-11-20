@@ -69,6 +69,7 @@ async function fetchExchangeRates() {
             console.log('Exchange rates updated successfully');
             return true;
         }
+        return false;
     } catch (error) {
         console.error('Failed to fetch exchange rates, using fallback:', error);
 
@@ -159,7 +160,7 @@ function updateCurrencyButtons(currency) {
         const btnCurrency = btn.getAttribute('data-currency');
         const isActive = btnCurrency === currency;
 
-        btn.setAttribute('aria-checked', isActive);
+        btn.setAttribute('aria-checked', String(isActive));
         btn.setAttribute('tabindex', isActive ? '0' : '-1');
 
         if (isActive) {
@@ -176,7 +177,7 @@ function displayLastUpdateTime() {
     if (updateElement && lastRateUpdate) {
         const updateDate = new Date(lastRateUpdate);
         const now = new Date();
-        const diffHours = Math.floor((now - updateDate) / (1000 * 60 * 60));
+        const diffHours = Math.floor((now.getTime() - updateDate.getTime()) / (1000 * 60 * 60));
 
         if (diffHours < 1) {
             updateElement.textContent = 'Updated: Just now';
@@ -190,13 +191,9 @@ function displayLastUpdateTime() {
 
 // Switch currency
 async function switchCurrency(currency) {
+    if (!currency) return;
     await setUserCurrency(currency);
     updateCurrencyButtons(currency);
-
-    // Refresh all displayed amounts
-    if (typeof refreshStudyAmounts === 'function') {
-        refreshStudyAmounts();
-    }
 
     // Announce to screen readers
     const currencyName = CURRENCY_NAMES[currency];
@@ -252,6 +249,7 @@ function setupCurrencySwitcher() {
                     return;
             }
 
+            // Focus the target button
             currencyButtons[targetIndex].focus();
         });
     });
@@ -272,17 +270,4 @@ function setupCurrencySwitcher() {
             announceToScreenReader('Exchange rates updated');
         });
     }
-}
-
-// Export for use in other files
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = {
-        convertFromGBP,
-        formatCurrency,
-        parseProlificAmount,
-        getUserCurrency,
-        initializeCurrency,
-        setupCurrencySwitcher,
-        CURRENCY_SYMBOLS
-    };
 }

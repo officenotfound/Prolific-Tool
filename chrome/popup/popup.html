@@ -39,7 +39,7 @@
                 </div>
                 <div class="stat-item">
                     <span class="stat-value" id="total-earnings">£0.00</span>
-                    <span class="stat-label">Potential</span>
+                    <span class="stat-label" data-i18n="potential">Potential Earnings</span>
                 </div>
             </div>
 
@@ -55,6 +55,31 @@
                     <div style="font-size: 12px; margin-top: 8px;" id="autoRefreshStatus"></div>
                 </div>
             </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history" class="tab-pane">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-value" id="history-count">0</span>
+                    <span class="stat-label">Studies Seen</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="search-history" class="form-control" placeholder="Search history...">
+            </div>
+
+            <div id="history-container">
+                <!-- History items will be injected here -->
+                <div class="empty-state">
+                    <div class="empty-icon">📜</div>
+                    <div>No study history yet.</div>
+                </div>
+            </div>
+
+            <button id="clear-history" class="btn btn-danger" style="width: 100%; margin-top: 16px;">Clear
+                History</button>
         </div>
 
         <!-- Settings Tab -->
@@ -331,5 +356,3 @@
 </body>
 
 </html>
-
-<script src="../dist/popup.js"></script>

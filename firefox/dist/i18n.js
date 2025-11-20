@@ -1,4 +1,5 @@
 // Translation System - Accessible i18n Implementation
+
 let currentTranslations = {};
 let currentLanguage = 'en';
 
@@ -23,7 +24,7 @@ function applyTranslations(translations) {
     // Translate elements with data-i18n attribute
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const key = element.getAttribute('data-i18n');
-        if (translations[key] && translations[key].message) {
+        if (key && translations[key] && translations[key].message) {
             element.textContent = translations[key].message;
         }
     });
@@ -31,7 +32,7 @@ function applyTranslations(translations) {
     // Translate placeholders
     document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
         const key = element.getAttribute('data-i18n-placeholder');
-        if (translations[key] && translations[key].message) {
+        if (key && translations[key] && translations[key].message) {
             element.placeholder = translations[key].message;
         }
     });
@@ -39,7 +40,7 @@ function applyTranslations(translations) {
     // Translate ARIA labels
     document.querySelectorAll('[data-i18n-aria]').forEach(element => {
         const key = element.getAttribute('data-i18n-aria');
-        if (translations[key] && translations[key].message) {
+        if (key && translations[key] && translations[key].message) {
             element.setAttribute('aria-label', translations[key].message);
         }
     });
@@ -65,7 +66,7 @@ function updateLanguageButtons(lang) {
         const btnLang = btn.getAttribute('data-lang');
         const isActive = btnLang === lang;
 
-        btn.setAttribute('aria-checked', isActive);
+        btn.setAttribute('aria-checked', String(isActive));
         btn.setAttribute('tabindex', isActive ? '0' : '-1');
 
         if (isActive) {
@@ -78,6 +79,7 @@ function updateLanguageButtons(lang) {
 
 // Switch language
 async function switchLanguage(lang) {
+    if (!lang) return;
     currentLanguage = lang;
 
     // Save preference
@@ -91,8 +93,10 @@ async function switchLanguage(lang) {
     updateLanguageButtons(lang);
 
     // Announce to screen readers
-    const langName = document.querySelector(`.lang-btn[data-lang="${lang}"] span:not(.flag)`).textContent;
-    announceToScreenReader(`Language changed to ${langName}`);
+    const langBtn = document.querySelector(`.lang-btn[data-lang="${lang}"] span:not(.flag)`);
+    if (langBtn && langBtn.textContent) {
+        announceToScreenReader(`Language changed to ${langBtn.textContent}`);
+    }
 }
 
 // Announce to screen readers (accessibility)
@@ -118,7 +122,7 @@ function setupLanguageSwitcher() {
         // Click/Enter/Space handler
         btn.addEventListener('click', () => {
             const lang = btn.getAttribute('data-lang');
-            switchLanguage(lang);
+            if (lang) switchLanguage(lang);
         });
 
         // Keyboard navigation
@@ -152,7 +156,7 @@ function setupLanguageSwitcher() {
                 case ' ':
                     e.preventDefault();
                     const lang = btn.getAttribute('data-lang');
-                    switchLanguage(lang);
+                    if (lang) switchLanguage(lang);
                     return;
 
                 default:

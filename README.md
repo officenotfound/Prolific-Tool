@@ -241,10 +241,34 @@ Your support helps keep this tool free and actively maintained!
 ## 🛠️ Tech Stack
 
 - **Manifest V3** (Chrome) / **Manifest V2** (Firefox)
-- TypeScript
+- TypeScript (Source in `src/`, compiled to `dist/`)
 - Material Design CSS
 - Chrome/Firefox Extension APIs
 - Modern ES6+ JavaScript
+
+## 👨‍💻 Development
+
+This project uses TypeScript. The source code is located in the `chrome/src` directory.
+
+### Prerequisites
+- Node.js and npm
+- TypeScript (`npm install -g typescript`)
+
+### Building
+To compile the TypeScript source files to JavaScript:
+
+```bash
+# Install dependencies
+npm install
+
+# Build
+npm run build
+
+# Watch mode (auto-recompile on change)
+npm run watch
+```
+
+> **Note**: The `dist` folder contains the compiled JavaScript files used by the extension. Do not edit files in `dist` directly; edit the TypeScript files in `src` and rebuild.
 
 ---
 
