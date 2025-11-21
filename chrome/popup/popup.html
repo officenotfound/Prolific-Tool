@@ -91,25 +91,27 @@
                 <div class="form-group">
                     <div class="form-group">
                         <label style="display: flex; align-items: center; gap: 8px;">
-                            <input type="checkbox" id="autoRefreshEnabled"> Enable Auto Refresh
+                            <input type="checkbox" id="autoRefreshEnabled"> <span data-i18n="enableAutoRefresh">Enable
+                                Auto Refresh</span>
                         </label>
                     </div>
-                    <label class="form-label">Refresh Interval (seconds)</label>
+                    <label class="form-label" data-i18n="refreshInterval">Refresh Interval (seconds)</label>
                     <input type="number" id="refreshRate" class="form-control" min="15" value="60">
                     <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
                         <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                            <input type="checkbox" id="randomRefresh"> Randomize (15s - 60s)
+                            <input type="checkbox" id="randomRefresh"> <span data-i18n="randomize">Randomize (15s -
+                                60s)</span>
                         </label>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Minimum Pay Rate (£/hr)</label>
+                    <label class="form-label" data-i18n="minimumPayRate">Minimum Pay Rate (£/hr)</label>
                     <input type="number" id="minPayRate" class="form-control" min="0" step="0.5" value="0">
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Notification Sound</label>
+                    <label class="form-label" data-i18n="notificationSound">Notification Sound</label>
                     <select id="selectAudio" class="form-control">
                         <option value="alert1.mp3" data-i18n="alert1">Alert 1</option>
                         <option value="alert2.mp3" data-i18n="alert2">Alert 2</option>
@@ -123,11 +125,12 @@
                         <option value="alert10.mp3" data-i18n="alert10">Alert 10</option>
                         <option value="alert11.wav" data-i18n="alert11">Alert 11</option>
                     </select>
-                    <button id="playAudio" class="btn btn-text" style="margin-top: 8px;">Test Sound</button>
+                    <button id="playAudio" class="btn btn-text" style="margin-top: 8px;" data-i18n="testAudio">Test
+                        Sound</button>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">Volume</label>
+                    <label class="form-label" data-i18n="volume">Volume</label>
                     <input type="range" id="volume" min="0" max="100" style="width: 100%;">
                 </div>
             </div>
@@ -135,33 +138,37 @@
             <div class="card">
                 <div class="form-group">
                     <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="showNotification"> Show Notifications
+                        <input type="checkbox" id="showNotification"> <span data-i18n="showNotifications">Show
+                            Notifications</span>
                     </label>
                 </div>
                 <div class="form-group">
                     <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="audioActive"> Play Sound
+                        <input type="checkbox" id="audioActive"> <span data-i18n="playSound">Play Sound</span>
                     </label>
                 </div>
                 <div class="form-group">
                     <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="focusProlific"> Focus Tab on New Study
+                        <input type="checkbox" id="focusProlific"> <span data-i18n="focusTabOnNewStudy">Focus Tab on New
+                            Study</span>
                     </label>
                 </div>
                 <div class="form-group">
                     <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="darkMode"> Dark Mode (Prolific Website)
+                        <input type="checkbox" id="darkMode"> <span data-i18n="darkModeProlific">Dark Mode (Prolific
+                            Website)</span>
                     </label>
                     <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
-                        Enable dark theme on Prolific website
+                        <span data-i18n="darkModeProlificDesc">Enable dark theme on Prolific website</span>
                     </div>
                 </div>
                 <div class="form-group">
                     <label style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="extensionDarkMode"> Extension Dark Mode
+                        <input type="checkbox" id="extensionDarkMode"> <span data-i18n="extensionDarkMode">Extension
+                            Dark Mode</span>
                     </label>
                     <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
-                        Dark theme for this extension popup
+                        <span data-i18n="extensionDarkModeDesc">Dark theme for this extension popup</span>
                     </div>
                 </div>
             </div>
