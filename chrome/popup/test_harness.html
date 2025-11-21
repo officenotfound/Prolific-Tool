@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Prolific Notifier Test Harness</title>
     <link href="../styles/material.css" rel="stylesheet">
+    <link href="../styles/popup_dark.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
@@ -24,6 +25,7 @@
             showNotification: true,
             audioActive: true,
             focusProlific: false,
+            autoRefreshEnabled: false,
             currentStudies: [
                 {
                     id: 'test1',
@@ -70,11 +72,15 @@
                         if (keys === 'currentStudies') {
                             result.currentStudies = mockStorage.currentStudies;
                         }
+                        if (keys === 'studyHistory') {
+                            result.studyHistory = mockStorage.studyHistory;
+                        }
                         if (cb) cb(result);
                         return Promise.resolve(result);
                     },
                     set: (items, cb) => {
                         if (items.currentStudies) mockStorage.currentStudies = items.currentStudies;
+                        if (items.studyHistory) mockStorage.studyHistory = items.studyHistory;
                         console.log('Storage Local Set:', items);
                         if (cb) cb();
                         return Promise.resolve();
@@ -88,6 +94,11 @@
             runtime: {
                 sendMessage: (msg) => console.log('Runtime Message:', msg),
                 getURL: (path) => path
+            },
+            tabs: {
+                query: (query, cb) => cb([{ id: 1 }]),
+                sendMessage: (tabId, msg) => console.log('Tab Message:', tabId, msg),
+                create: (props) => console.log('Create Tab:', props)
             }
         };
     </script>
@@ -98,17 +109,19 @@
     <div class="app-bar">
         <div class="app-title">
             <img src="../imgs/logo.png" alt="Logo" class="app-logo">
-            Prolific Notifier
+            Prolific Tool
         </div>
-        <div id="earnings-summary" class="stat-value" style="font-size: 14px; color: white;">£0.00</div>
+        <div id="earnings-summary" class="stat-value" style="font-size: 14px; color: white;"
+            data-i18n="earningsSummary">£0.00</div>
     </div>
 
-    <div class="nav-tabs">
-        <div class="nav-tab active" data-tab="studies">Studies</div>
-        <div class="nav-tab" data-tab="settings">Settings</div>
-        <div class="nav-tab" data-tab="faq">FAQ</div>
-        <div class="nav-tab" data-tab="support">Support</div>
-    </div>
+    <nav class="nav-tabs">
+        <button class="nav-tab active" data-tab="studies" data-i18n="studies">Studies</button>
+        <button class="nav-tab" data-tab="history" data-i18n="history">History</button>
+        <button class="nav-tab" data-tab="settings" data-i18n="settings">Settings</button>
+        <button class="nav-tab" data-tab="faq" data-i18n="faq">FAQ</button>
+        <button class="nav-tab" data-tab="support" data-i18n="support">Support</button>
+    </nav>
 
     <div class="content">
         <!-- Studies Tab -->
@@ -116,36 +129,71 @@
             <div class="stats-container">
                 <div class="stat-item">
                     <span class="stat-value" id="studies-count">0</span>
-                    <span class="stat-label">Available</span>
+                    <span class="stat-label" data-i18n="available">Available</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-value" id="total-earnings">£0.00</span>
-                    <span class="stat-label">Potential</span>
+                    <span class="stat-label" data-i18n="potential">Potential Earnings</span>
                 </div>
             </div>
 
             <div class="form-group">
-                <input type="text" id="search-studies" class="form-control" placeholder="Search studies...">
+                <input type="text" id="search-studies" class="form-control" placeholder="Search studies..."
+                    data-i18n-placeholder="searchStudies">
             </div>
 
             <div id="studies-container">
                 <!-- Studies will be injected here -->
                 <div class="empty-state">
                     <div class="empty-icon">📭</div>
-                    <div>No studies available right now.</div>
-                    <div style="font-size: 12px; margin-top: 8px;">Auto-refresh is active.</div>
+                    <div data-i18n="noStudies">No studies available right now.</div>
+                    <div style="font-size: 12px; margin-top: 8px;" id="autoRefreshStatus"></div>
                 </div>
             </div>
+        </div>
+
+        <!-- History Tab -->
+        <div id="history" class="tab-pane">
+            <div class="stats-container">
+                <div class="stat-item">
+                    <span class="stat-value" id="history-count">0</span>
+                    <span class="stat-label" data-i18n="totalSeen">Studies Seen</span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <input type="text" id="search-history" class="form-control" placeholder="Search history..."
+                    data-i18n-placeholder="searchHistory">
+            </div>
+
+            <div id="history-container">
+                <!-- History items will be injected here -->
+                <div class="empty-state">
+                    <div class="empty-icon">📜</div>
+                    <div data-i18n="noHistory">No study history yet.</div>
+                </div>
+            </div>
+
+            <button id="clear-history" class="btn btn-danger" style="width: 100%; margin-top: 16px;">Clear
+                History</button>
         </div>
 
         <!-- Settings Tab -->
         <div id="settings" class="tab-pane">
             <div class="card">
                 <div class="form-group">
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 8px;">
+                            <input type="checkbox" id="autoRefreshEnabled"> Enable Auto Refresh
+                        </label>
+                    </div>
                     <label class="form-label">Refresh Interval (seconds)</label>
-                    <input type="number" id="refreshRate" class="form-control" min="60" value="60">
-                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">Minimum 60 seconds recommended to
-                        avoid rate limiting.</div>
+                    <input type="number" id="refreshRate" class="form-control" min="15" value="60">
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
+                        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                            <input type="checkbox" id="randomRefresh"> Randomize (15s - 60s)
+                        </label>
+                    </div>
                 </div>
 
                 <div class="form-group">
@@ -156,9 +204,17 @@
                 <div class="form-group">
                     <label class="form-label">Notification Sound</label>
                     <select id="selectAudio" class="form-control">
-                        <option value="alert1.mp3">Alert 1</option>
-                        <option value="alert2.mp3">Alert 2</option>
-                        <option value="alert3.mp3">Alert 3</option>
+                        <option value="alert1.mp3" data-i18n="alert1">Alert 1</option>
+                        <option value="alert2.mp3" data-i18n="alert2">Alert 2</option>
+                        <option value="alert3.mp3" data-i18n="alert3">Alert 3</option>
+                        <option value="alert4.mp3" data-i18n="alert4">Alert 4</option>
+                        <option value="alert5.mp3" data-i18n="alert5">Alert 5</option>
+                        <option value="alert6.mp3" data-i18n="alert6">Alert 6</option>
+                        <option value="alert7.mp3" data-i18n="alert7">Alert 7</option>
+                        <option value="alert8.mp3" data-i18n="alert8">Alert 8</option>
+                        <option value="alert9.wav" data-i18n="alert9">Alert 9</option>
+                        <option value="alert10.mp3" data-i18n="alert10">Alert 10</option>
+                        <option value="alert11.wav" data-i18n="alert11">Alert 11</option>
                     </select>
                     <button id="playAudio" class="btn btn-text" style="margin-top: 8px;">Test Sound</button>
                 </div>
@@ -185,6 +241,175 @@
                         <input type="checkbox" id="focusProlific"> Focus Tab on New Study
                     </label>
                 </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="darkMode"> Dark Mode (Prolific Website)
+                    </label>
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
+                        Enable dark theme on Prolific website
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="extensionDarkMode"> Extension Dark Mode
+                    </label>
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
+                        Dark theme for this extension popup
+                    </div>
+                </div>
+            </div>
+
+            <!-- Language Selector -->
+            <div class="card" style="margin-bottom: 16px;">
+                <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 16px;" data-i18n="languageTitle">🌐 Language
+                </h3>
+                <p style="font-size: 12px; color: #5f6368; margin-bottom: 16px;" data-i18n="selectLanguage">Select your
+                    preferred language</p>
+
+                <div class="language-buttons" role="radiogroup" aria-label="Language selection">
+                    <button class="lang-btn" data-lang="en" role="radio" aria-checked="true" tabindex="0">
+                        <span class="flag" aria-hidden="true">🇺🇸</span>
+                        <span data-i18n="english">English</span>
+                    </button>
+                    <button class="lang-btn" data-lang="de" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="flag" aria-hidden="true">🇩🇪</span>
+                        <span data-i18n="german">German</span>
+                    </button>
+                    <button class="lang-btn" data-lang="es" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="flag" aria-hidden="true">🇪🇸</span>
+                        <span data-i18n="spanish">Spanish</span>
+                    </button>
+                    <button class="lang-btn" data-lang="fr" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="flag" aria-hidden="true">🇫🇷</span>
+                        <span data-i18n="french">French</span>
+                    </button>
+                    <button class="lang-btn" data-lang="pt" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="flag" aria-hidden="true">🇵🇹</span>
+                        <span data-i18n="portuguese">Portuguese</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Currency Selector -->
+            <div class="card" style="margin-bottom: 16px;">
+                <h3 style="margin-top: 0; margin-bottom: 8px; font-size: 16px;" data-i18n="currencyDisplay">💰 Currency
+                    Display</h3>
+                <p style="font-size: 12px; color: #5f6368; margin-bottom: 16px;" data-i18n="currencyDesc">
+                    Choose your preferred currency for displaying study payments
+                </p>
+
+                <div class="currency-buttons" role="radiogroup" aria-label="Currency selection">
+                    <button class="currency-btn" data-currency="USD" role="radio" aria-checked="true" tabindex="0">
+                        <span class="currency-symbol">$</span>
+                        <span>USD</span>
+                    </button>
+                    <button class="currency-btn" data-currency="CAD" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">CA$</span>
+                        <span>CAD</span>
+                    </button>
+                    <button class="currency-btn" data-currency="GBP" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">£</span>
+                        <span>GBP</span>
+                    </button>
+                    <button class="currency-btn" data-currency="EUR" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">€</span>
+                        <span>EUR</span>
+                    </button>
+                    <button class="currency-btn" data-currency="AUD" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">A$</span>
+                        <span>AUD</span>
+                    </button>
+                    <button class="currency-btn" data-currency="NZD" role="radio" aria-checked="false" tabindex="-1">
+                        <span class="currency-symbol">NZ$</span>
+                        <span>NZD</span>
+                    </button>
+                </div>
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; font-size: 11px; color: #5f6368;">
+                    <span id="rate-update-time" data-i18n="ratesUpdated">Rates updated: Loading...</span>
+                    <button id="refresh-rates-btn" class="btn-text" style="font-size: 11px; padding: 4px 8px;"
+                        data-i18n="refreshRates">
+                        🔄 Refresh Rates
+                    </button>
+                </div>
+            </div>
+
+            <!-- Study Filters -->
+            <div class="card">
+                <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 16px;" data-i18n="studyFilters">Study Filters
+                </h3>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="minimumPay">Minimum Pay ($)</label>
+                    <input type="number" id="minPay" class="form-control" min="0" step="0.5" value="0">
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;" data-i18n="minimumPayDesc">
+                        Hide studies below this amount (in USD)
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" data-i18n="refreshInterval">Refresh Interval (seconds)</label>
+                    <input type="number" id="refreshInterval" class="form-control" min="15" max="300" value="30">
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;" data-i18n="refreshIntervalDesc">
+                        Recommended: 30-60 seconds to avoid rate limiting
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="randomizeInterval">
+                        <span data-i18n="randomize">Randomize (15s - 60s)</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="enableAutoRefresh">
+                        <span data-i18n="enableAutoRefresh">Enable Auto-Refresh</span>
+                    </label>
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;" data-i18n="autoRefreshDesc">
+                        Must be enabled before starting
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <button id="toggleAutoRefresh" class="btn btn-primary" style="width: 100%;"
+                        data-i18n="startAutoRefresh">
+                        ▶️ Start Auto-Refresh
+                    </button>
+                    <div id="refreshStatus"
+                        style="font-size: 11px; color: #5f6368; margin-top: 8px; text-align: center;"
+                        data-i18n="autoRefreshStopped">
+                        Auto-refresh is stopped
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="hideUnderOneDollar"> <span data-i18n="hideUnderOneDollar">Hide
+                            studies under $1</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="useWhitelist"> <span data-i18n="useWhitelist">Use Researcher
+                            Whitelist</span>
+                    </label>
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;" data-i18n="useWhitelistDesc">
+                        When enabled, only show studies from whitelisted researchers
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 24px; border-top: 1px solid #dadce0; padding-top: 16px;">
+                    <button id="simulateStudies" class="btn btn-secondary" style="width: 100%;">
+                        🧪 Simulate Studies (Test Mode)
+                    </button>
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px; text-align: center;">
+                        Generates random studies for testing
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -198,30 +423,171 @@
         <!-- Support Tab -->
         <div id="support" class="tab-pane">
             <div class="support-section">
-                <h3>Enjoying the extension?</h3>
-                <p style="color: #5f6368; margin-bottom: 24px;">Your support helps me keep this tool free and updated.
-                </p>
+                <h3 data-i18n="enjoyingExtension">Enjoying the extension?</h3>
+                <p style="color: #5f6368; margin-bottom: 24px;" data-i18n="supportMessage">Your support helps me keep
+                    this tool free and updated.
+                    Every contribution makes a difference!</p>
 
-                <a href="https://buymeacoffee.com/404officenotfound" target="_blank" class="coffee-btn">
-                    <img src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg" alt="Buy me a coffee">
-                    Buy me a coffee
+                <a href="https://buymeacoffee.com/404officenotfound" target="_blank" class="btn btn-primary"
+                    style="display: block; text-align: center; margin-bottom: 32px;" data-i18n="buyMeCoffee">
+                    ☕ Buy Me a Coffee
                 </a>
 
-                <div style="margin-top: 24px;">
-                    <a href="https://chromewebstore.google.com/detail/prolific-studies-notifier/..." target="_blank"
-                        class="btn btn-text">Rate on Chrome Web Store</a>
+                <h3 data-i18n="needHelp">Need Help or Have Feedback?</h3>
+                <p style="color: #5f6368; margin-bottom: 16px;" data-i18n="loveToHear">I'd love to hear from you!</p>
+
+                <div style="background: #f8f9fa; padding: 16px; border-radius: 8px; margin-bottom: 24px;">
+                    <div style="margin-bottom: 12px;">
+                        <strong data-i18n="emailLabel">📧 Email:</strong><br>
+                        <a href="mailto:404officenotfound@gmail.com" style="color: #1a73e8; text-decoration: none;">
+                            404officenotfound@gmail.com
+                        </a>
+                    </div>
+                    <div>
+                        <strong data-i18n="twitterLabel">🐦 X (Twitter):</strong><br>
+                        <a href="https://x.com/404office" target="_blank"
+                            style="color: #1a73e8; text-decoration: none;">
+                            @404office
+                        </a>
+                    </div>
                 </div>
+
+                <a href="https://chromewebstore.google.com/detail/prolific-tool/..." target="_blank"
+                    class="btn btn-secondary" style="display: block; text-align: center;" data-i18n="rateExtension">
+                    ⭐ Rate on Chrome Web Store
+                </a>
 
                 <div style="margin-top: 32px; border-top: 1px solid #dadce0; padding-top: 16px;">
                     <p style="font-size: 12px; color: #9aa0a6;">Version 3.2.0</p>
                     <a href="https://github.com/spin311/ProlificAutomaticStudies" target="_blank" class="btn btn-text"
-                        style="font-size: 12px;">GitHub</a>
+                        style="font-size: 12px;" data-i18n="github">GitHub</a>
+                    ```
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="../dist/i18n.js"></script>
+    <script>
+        // Mock translations to bypass fetch restriction on file:// protocol
+        const mockTranslations = {
+            "extensionName": { "message": "Prolific Tool" },
+            "extensionDescription": { "message": "Browser extension for Prolific to notify you when studies are available" },
+            "studies": { "message": "Studies" },
+            "history": { "message": "History" },
+            "settings": { "message": "Settings" },
+            "faq": { "message": "FAQ" },
+            "support": { "message": "Support" },
+            "available": { "message": "Available" },
+            "potential": { "message": "Potential Earnings" },
+            "totalSeen": { "message": "Total Seen" },
+            "completed": { "message": "Completed" },
+            "earningsSummary": { "message": "£0.00" },
+            "searchStudies": { "message": "Search studies..." },
+            "searchHistory": { "message": "Search history..." },
+            "noStudies": { "message": "No studies available right now." },
+            "checkBack": { "message": "Check back soon or enable auto-refresh!" },
+            "noHistory": { "message": "No study history yet." },
+            "historyWillAppear": { "message": "Studies will appear here as you see them." },
+            "refreshInterval": { "message": "Refresh Interval (seconds)" },
+            "randomize": { "message": "Randomize (15s - 60s)" },
+            "enableAutoRefresh": { "message": "Enable Auto Refresh" },
+            "minimumPayRate": { "message": "Minimum Pay Rate ($/hr)" },
+            "notificationSound": { "message": "Notification Sound" },
+            "volume": { "message": "Volume" },
+            "testAudio": { "message": "Test Audio" },
+            "showNotifications": { "message": "Show Notifications" },
+            "playSound": { "message": "Play Sound" },
+            "focusTabOnNewStudy": { "message": "Focus Tab on New Study" },
+            "darkModeProlific": { "message": "Dark Mode (Prolific Website)" },
+            "darkModeProlificDesc": { "message": "Enable dark theme on Prolific website" },
+            "extensionDarkMode": { "message": "Extension Dark Mode" },
+            "extensionDarkModeDesc": { "message": "Dark theme for this extension popup" },
+            "studyFilters": { "message": "Study Filters" },
+            "minimumPay": { "message": "Minimum Pay ($)" },
+            "minimumPayDesc": { "message": "Hide studies below this amount (in USD)" },
+            "hideUnderOneDollar": { "message": "Hide studies under $1" },
+            "useWhitelist": { "message": "Use Researcher Whitelist" },
+            "useWhitelistDesc": { "message": "When enabled, only show studies from whitelisted researchers" },
+            "languageTitle": { "message": "🌐 Language" },
+            "selectLanguage": { "message": "Select your preferred language" },
+            "english": { "message": "English" },
+            "german": { "message": "German" },
+            "spanish": { "message": "Spanish" },
+            "french": { "message": "French" },
+            "portuguese": { "message": "Portuguese" },
+            "enjoyingExtension": { "message": "Enjoying the extension?" },
+            "supportMessage": { "message": "Your support helps me keep this tool free and updated. Every contribution makes a difference!" },
+            "buyMeCoffee": { "message": "☕ Buy Me a Coffee" },
+            "needHelp": { "message": "Need Help or Have Feedback?" },
+            "loveToHear": { "message": "I'd love to hear from you!" },
+            "emailLabel": { "message": "📧 Email:" },
+            "twitterLabel": { "message": "🐦 X (Twitter):" },
+            "github": { "message": "GitHub" },
+            "rateExtension": { "message": "⭐ Rate on Chrome Web Store" },
+            "alert1": { "message": "Alert 1" },
+            "alert2": { "message": "Alert 2" },
+            "alert3": { "message": "Alert 3" },
+            "alert4": { "message": "Alert 4" },
+            "alert5": { "message": "Alert 5" },
+            "alert6": { "message": "Alert 6" },
+            "alert7": { "message": "Alert 7" },
+            "alert8": { "message": "Alert 8" },
+            "alert9": { "message": "Alert 9" },
+            "alert10": { "message": "Alert 10" },
+            "alert11": { "message": "Alert 11" },
+            "save": { "message": "Save" },
+            "cancel": { "message": "Cancel" },
+            "markCompleted": { "message": "Mark as Completed" },
+            "currencyDisplay": { "message": "💰 Currency Display" },
+            "currencyDesc": { "message": "Choose your preferred currency for displaying study payments" },
+            "ratesUpdated": { "message": "Rates updated:" },
+            "refreshRates": { "message": "🔄 Refresh Rates" },
+            "refreshIntervalDesc": { "message": "Recommended: 30-60 seconds to avoid rate limiting" },
+            "autoRefreshDesc": { "message": "Must be enabled before starting" },
+            "startAutoRefresh": { "message": "▶️ Start Auto-Refresh" },
+            "stopAutoRefresh": { "message": "⏸️ Stop Auto-Refresh" },
+            "autoRefreshStopped": { "message": "Auto-refresh is stopped" },
+            "autoRefreshRunning": { "message": "Auto-refresh is running..." },
+            "autoRefreshActive": { "message": "Auto-refresh is active." },
+            "autoRefreshDisabled": { "message": "Auto-refresh is disabled." },
+            "enableFirst": { "message": "Please enable 'Enable Auto-Refresh' checkbox first!" },
+            "confirmClearHistory": { "message": "Are you sure you want to clear your study history?" },
+            "untitledStudy": { "message": "Untitled Study" },
+            "unknownResearcher": { "message": "Unknown Researcher" },
+            "faq_q1": { "message": "What is Prolific?" },
+            "faq_a1": { "message": "Prolific is a platform that connects researchers with participants for academic and industry studies. You earn money by sharing your insights and experiences in research studies." },
+            "faq_q2": { "message": "How do I get paid?" },
+            "faq_a2": { "message": "Prolific pays via PayPal (through Hyperwallet). You can cash out once you reach £6 or $6. After your first 4 cashouts, payments are typically instant! Researchers have up to 22 days to approve studies, but it's usually much faster." },
+            "faq_q3": { "message": "How often can I withdraw money?" },
+            "faq_a3": { "message": "You can withdraw once every 24 hours (resets at midnight UTC). NEW: If you recently updated your PayPal address or have fewer than 4 cashouts, there's a 72-hour cool-off period between withdrawals for security." },
+            "faq_q4": { "message": "What is the minimum hourly rate?" },
+            "faq_a4": { "message": "Prolific enforces a minimum of $8/£6 per hour, but researchers are encouraged to pay at least $12/£9 per hour. Studies must meet these minimums to be posted on the platform." },
+            "faq_q5": { "message": "Why do I see no studies?" },
+            "faq_a5": { "message": "Study availability depends on your demographics and researcher needs. Prolific uses 'adaptive rate limiting' to prioritize participants who haven't taken studies recently, ensuring fresh participant pools for researchers." },
+            "faq_q6": { "message": "What is adaptive rate limiting?" },
+            "faq_a6": { "message": "When many participants are active but few studies are available, Prolific prioritizes those who've spent less time on studies recently. When studies fill slowly, limits are loosened. This ensures fair distribution and 'naivety' in research." },
+            "faq_q7": { "message": "What does 'Multiple submissions allowed' mean?" },
+            "faq_a7": { "message": "You can take the study more than once if spots are available. This works like batch jobs - complete one submission, then you can reserve another spot if available." },
+            "faq_q8": { "message": "Why do I see studies with 1 spot that are full?" },
+            "faq_a8": { "message": "These are often studies where a participant returned their submission or timed out. The spot becomes available briefly and is quickly taken by another user. This extension helps you catch these!" },
+            "faq_q9": { "message": "How do I avoid rejections?" },
+            "faq_a9": { "message": "Take appropriate time to complete studies, answer all questions thoroughly, pay attention to instructions and attention checks, give thoughtful responses (especially for open-ended questions), and don't use AI assistance unless specifically requested." },
+            "faq_q10": { "message": "Is my data safe?" },
+            "faq_a10": { "message": "Yes! Prolific uses identity verification, requires PayPal only for payment, and keeps your identity anonymous from researchers. They only see demographic info and your anonymous Prolific ID. Data is never shared with third-party advertisers." },
+            "faq_q11": { "message": "What if I have an issue with a study?" },
+            "faq_a11": { "message": "Contact the researcher first through Prolific's messaging system. If not resolved within 7 days, submit a support request to the Prolific team. They'll investigate and help resolve the issue." }
+        };
+
+        // Override loadTranslations to return mock data
+        loadTranslations = async function (lang) {
+            console.log('Using mock translations for test harness');
+            return mockTranslations;
+        };
+    </script>
+    <script src="../dist/currency.js"></script>
     <script src="../dist/popup.js"></script>
 </body>
 
 </html>
+```

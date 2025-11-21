@@ -38,6 +38,9 @@
     "completed": {
         "message": "Completed"
     },
+    "earningsSummary": {
+        "message": "£0.00"
+    },
     "_search": {
         "message": "Search placeholders"
     },
@@ -178,6 +181,39 @@
     },
     "rateExtensionFirefox": {
         "message": "⭐ Rate on Firefox Add-ons"
+    },
+    "alert1": {
+        "message": "Alert 1"
+    },
+    "alert2": {
+        "message": "Alert 2"
+    },
+    "alert3": {
+        "message": "Alert 3"
+    },
+    "alert4": {
+        "message": "Alert 4"
+    },
+    "alert5": {
+        "message": "Alert 5"
+    },
+    "alert6": {
+        "message": "Alert 6"
+    },
+    "alert7": {
+        "message": "Alert 7"
+    },
+    "alert8": {
+        "message": "Alert 8"
+    },
+    "alert9": {
+        "message": "Alert 9"
+    },
+    "alert10": {
+        "message": "Alert 10"
+    },
+    "alert11": {
+        "message": "Alert 11"
     },
     "_buttons": {
         "message": "Button labels"

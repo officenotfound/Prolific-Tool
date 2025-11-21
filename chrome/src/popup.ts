@@ -1,52 +1,8 @@
 
 
 // FAQ Data embedded for simplicity - Updated for 2024/2025
-const FAQ_DATA = [
-    {
-        "question": "What is Prolific?",
-        "answer": "Prolific is a platform that connects researchers with participants for academic and industry studies. You earn money by sharing your insights and experiences in research studies."
-    },
-    {
-        "question": "How do I get paid?",
-        "answer": "Prolific pays via PayPal (through Hyperwallet). You can cash out once you reach £6 or $6. After your first 4 cashouts, payments are typically instant! Researchers have up to 22 days to approve studies, but it's usually much faster."
-    },
-    {
-        "question": "How often can I withdraw money?",
-        "answer": "You can withdraw once every 24 hours (resets at midnight UTC). NEW: If you recently updated your PayPal address or have fewer than 4 cashouts, there's a 72-hour cool-off period between withdrawals for security."
-    },
-    {
-        "question": "What is the minimum hourly rate?",
-        "answer": "Prolific enforces a minimum of $8/£6 per hour, but researchers are encouraged to pay at least $12/£9 per hour. Studies must meet these minimums to be posted on the platform."
-    },
-    {
-        "question": "Why do I see no studies?",
-        "answer": "Study availability depends on your demographics and researcher needs. Prolific uses 'adaptive rate limiting' to prioritize participants who haven't taken studies recently, ensuring fresh participant pools for researchers."
-    },
-    {
-        "question": "What is adaptive rate limiting?",
-        "answer": "When many participants are active but few studies are available, Prolific prioritizes those who've spent less time on studies recently. When studies fill slowly, limits are loosened. This ensures fair distribution and 'naivety' in research."
-    },
-    {
-        "question": "What does 'Multiple submissions allowed' mean?",
-        "answer": "You can take the study more than once if spots are available. This works like batch jobs - complete one submission, then you can reserve another spot if available."
-    },
-    {
-        "question": "Why do I see studies with 1 spot that are full?",
-        "answer": "These are often studies where a participant returned their submission or timed out. The spot becomes available briefly and is quickly taken by another user. This extension helps you catch these!"
-    },
-    {
-        "question": "How do I avoid rejections?",
-        "answer": "Take appropriate time to complete studies, answer all questions thoroughly, pay attention to instructions and attention checks, give thoughtful responses (especially for open-ended questions), and don't use AI assistance unless specifically requested."
-    },
-    {
-        "question": "Is my data safe?",
-        "answer": "Yes! Prolific uses identity verification, requires PayPal only for payment, and keeps your identity anonymous from researchers. They only see demographic info and your anonymous Prolific ID. Data is never shared with third-party advertisers."
-    },
-    {
-        "question": "What if I have an issue with a study?",
-        "answer": "Contact the researcher first through Prolific's messaging system. If not resolved within 7 days, submit a support request to the Prolific team. They'll investigate and help resolve the issue."
-    }
-];
+// FAQ Data will be loaded from translations
+
 
 interface Study {
     id: string;
@@ -244,7 +200,7 @@ async function setupSettings() {
             const enableAutoRefresh = (document.getElementById('autoRefreshEnabled') as HTMLInputElement).checked;
 
             if (!enableAutoRefresh) {
-                alert('Please enable "Enable Auto-Refresh" checkbox first!');
+                alert(currentTranslations['enableFirst']?.message || 'Please enable "Enable Auto-Refresh" checkbox first!');
                 return;
             }
 
@@ -252,16 +208,16 @@ async function setupSettings() {
 
             // Update button and status
             if (isRefreshRunning) {
-                toggleButton.textContent = '⏸️ Stop Auto-Refresh';
+                toggleButton.textContent = currentTranslations['stopAutoRefresh']?.message || '⏸️ Stop Auto-Refresh';
                 toggleButton.classList.remove('btn-primary');
                 toggleButton.classList.add('btn-danger');
-                refreshStatus.textContent = 'Auto-refresh is running...';
+                refreshStatus.textContent = currentTranslations['autoRefreshRunning']?.message || 'Auto-refresh is running...';
                 refreshStatus.style.color = '#1e8e3e';
             } else {
-                toggleButton.textContent = '▶️ Start Auto-Refresh';
+                toggleButton.textContent = currentTranslations['startAutoRefresh']?.message || '▶️ Start Auto-Refresh';
                 toggleButton.classList.remove('btn-danger');
                 toggleButton.classList.add('btn-primary');
-                refreshStatus.textContent = 'Auto-refresh is stopped';
+                refreshStatus.textContent = currentTranslations['autoRefreshStopped']?.message || 'Auto-refresh is stopped';
                 refreshStatus.style.color = '#5f6368';
             }
 
@@ -284,10 +240,10 @@ async function setupSettings() {
         chrome.storage.sync.get('autoRefreshRunning', (result) => {
             isRefreshRunning = result.autoRefreshRunning || false;
             if (isRefreshRunning) {
-                toggleButton.textContent = '⏸️ Stop Auto-Refresh';
+                toggleButton.textContent = currentTranslations['stopAutoRefresh']?.message || '⏸️ Stop Auto-Refresh';
                 toggleButton.classList.remove('btn-primary');
                 toggleButton.classList.add('btn-danger');
-                refreshStatus.textContent = 'Auto-refresh is running...';
+                refreshStatus.textContent = currentTranslations['autoRefreshRunning']?.message || 'Auto-refresh is running...';
                 refreshStatus.style.color = '#1e8e3e';
             }
         });
@@ -328,7 +284,7 @@ async function setupSettings() {
 function updateAutoRefreshStatus(isEnabled: boolean) {
     const statusEl = document.getElementById('autoRefreshStatus');
     if (statusEl) {
-        statusEl.textContent = isEnabled ? 'Auto-refresh is active.' : '';
+        statusEl.textContent = isEnabled ? (currentTranslations['autoRefreshActive']?.message || 'Auto-refresh is active.') : '';
     }
 }
 
@@ -336,15 +292,30 @@ function setupFAQ() {
     const container = document.getElementById('faq-container');
     if (!container) return;
 
-    FAQ_DATA.forEach(item => {
+    const container = document.getElementById('faq-container');
+    if (!container) return;
+
+    // Generate FAQ from translations
+    // We assume keys like faq_q1, faq_a1, faq_q2, faq_a2, etc.
+    // We'll loop until we don't find a question.
+    let i = 1;
+    while (true) {
+        const qKey = `faq_q${i}`;
+        const aKey = `faq_a${i}`;
+
+        if (!currentTranslations[qKey]) break;
+
+        const questionText = currentTranslations[qKey].message;
+        const answerText = currentTranslations[aKey]?.message || '';
+
         const div = document.createElement('div');
         div.className = 'faq-item';
         div.innerHTML = `
             <div class="faq-question">
-                ${item.question}
+                ${questionText}
                 <span>▼</span>
             </div>
-            <div class="faq-answer">${item.answer}</div>
+            <div class="faq-answer">${answerText}</div>
         `;
 
         const question = div.querySelector('.faq-question');
@@ -357,7 +328,8 @@ function setupFAQ() {
         }
 
         container.appendChild(div);
-    });
+        i++;
+    }
 }
 
 async function loadStudies() {
@@ -374,11 +346,14 @@ async function loadStudies() {
         container.innerHTML = '';
         if (list.length === 0) {
             const settings = await chrome.storage.sync.get('autoRefreshEnabled');
-            const statusText = settings.autoRefreshEnabled ? 'Auto-refresh is active.' : 'Auto-refresh is disabled.';
+            const statusText = settings.autoRefreshEnabled ?
+                (currentTranslations['autoRefreshActive']?.message || 'Auto-refresh is active.') :
+                (currentTranslations['autoRefreshDisabled']?.message || 'Auto-refresh is disabled.');
+
             container.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">📭</div>
-                    <div>No studies available right now.</div>
+                    <div>${currentTranslations['noStudies']?.message || 'No studies available right now.'}</div>
                     <div style="font-size: 12px; margin-top: 8px;" id="autoRefreshStatus">${statusText}</div>
                 </div>`;
             return;
@@ -394,11 +369,11 @@ async function loadStudies() {
 
             const title = document.createElement('h3');
             title.className = 'study-title';
-            title.textContent = study.title || 'Untitled Study';
+            title.textContent = study.title || currentTranslations['untitledStudy']?.message || 'Untitled Study';
 
             const researcher = document.createElement('span');
             researcher.className = 'study-researcher';
-            researcher.textContent = study.researcher || 'Unknown Researcher';
+            researcher.textContent = study.researcher || currentTranslations['unknownResearcher']?.message || 'Unknown Researcher';
 
             header.appendChild(title);
             header.appendChild(researcher);
@@ -494,7 +469,7 @@ function setupHistory() {
     const clearBtn = document.getElementById('clear-history');
     if (clearBtn) {
         clearBtn.addEventListener('click', async () => {
-            if (confirm('Are you sure you want to clear your study history?')) {
+            if (confirm(currentTranslations['confirmClearHistory']?.message || 'Are you sure you want to clear your study history?')) {
                 await chrome.storage.local.set({ studyHistory: { studies: [], lastUpdated: new Date().toISOString() } });
                 await loadHistory();
             }
@@ -519,7 +494,7 @@ async function loadHistory() {
             container.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">📜</div>
-                    <div>No study history yet.</div>
+                    <div>${currentTranslations['noHistory']?.message || 'No study history yet.'}</div>
                 </div>`;
             return;
         }
@@ -540,18 +515,18 @@ async function loadHistory() {
 
             const title = document.createElement('h3');
             title.className = 'study-title';
-            title.textContent = study.title || 'Untitled Study';
+            title.textContent = study.title || currentTranslations['untitledStudy']?.message || 'Untitled Study';
 
             if (study.completed) {
                 const badge = document.createElement('span');
                 badge.style.cssText = 'background:#e6fffa; color:#00796b; padding:2px 6px; border-radius:4px; font-size:10px; margin-left: 8px;';
-                badge.textContent = 'Completed';
+                badge.textContent = currentTranslations['completed']?.message || 'Completed';
                 title.appendChild(badge);
             }
 
             const researcher = document.createElement('span');
             researcher.className = 'study-researcher';
-            researcher.textContent = study.researcher || 'Unknown Researcher';
+            researcher.textContent = study.researcher || currentTranslations['unknownResearcher']?.message || 'Unknown Researcher';
 
             header.appendChild(title);
             header.appendChild(researcher);

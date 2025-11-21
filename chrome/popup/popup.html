@@ -18,7 +18,8 @@
             <img src="../imgs/logo.png" alt="Logo" class="app-logo">
             Prolific Tool
         </div>
-        <div id="earnings-summary" class="stat-value" style="font-size: 14px; color: white;">£0.00</div>
+        <div id="earnings-summary" class="stat-value" style="font-size: 14px; color: white;"
+            data-i18n="earningsSummary">£0.00</div>
     </div>
 
     <nav class="nav-tabs">
@@ -110,16 +111,17 @@
                 <div class="form-group">
                     <label class="form-label">Notification Sound</label>
                     <select id="selectAudio" class="form-control">
-                        <option value="alert1.mp3">Alert 1</option>
-                        <option value="alert2.mp3">Alert 2</option>
-                        <option value="alert3.mp3">Alert 3</option>
-                        <option value="bell.mp3">Bell</option>
-                        <option value="gluck.mp3">Gluck</option>
-                        <option value="chime.mp3">Chime</option>
-                        <option value="ding.mp3">Ding</option>
-                        <option value="beep.mp3">Beep</option>
-                        <option value="robot.wav">Robot</option>
-                        <option value="loud.mp3">Loud</option>
+                        <option value="alert1.mp3" data-i18n="alert1">Alert 1</option>
+                        <option value="alert2.mp3" data-i18n="alert2">Alert 2</option>
+                        <option value="alert3.mp3" data-i18n="alert3">Alert 3</option>
+                        <option value="alert4.mp3" data-i18n="alert4">Alert 4</option>
+                        <option value="alert5.mp3" data-i18n="alert5">Alert 5</option>
+                        <option value="alert6.mp3" data-i18n="alert6">Alert 6</option>
+                        <option value="alert7.mp3" data-i18n="alert7">Alert 7</option>
+                        <option value="alert8.mp3" data-i18n="alert8">Alert 8</option>
+                        <option value="alert9.wav" data-i18n="alert9">Alert 9</option>
+                        <option value="alert10.mp3" data-i18n="alert10">Alert 10</option>
+                        <option value="alert11.wav" data-i18n="alert11">Alert 11</option>
                     </select>
                     <button id="playAudio" class="btn btn-text" style="margin-top: 8px;">Test Sound</button>
                 </div>
@@ -304,6 +306,15 @@
                     </label>
                     <div style="font-size: 11px; color: #5f6368; margin-top: 4px;" data-i18n="useWhitelistDesc">
                         When enabled, only show studies from whitelisted researchers
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 24px; border-top: 1px solid #dadce0; padding-top: 16px;">
+                    <button id="simulateStudies" class="btn btn-secondary" style="width: 100%;">
+                        🧪 Simulate Studies (Test Mode)
+                    </button>
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px; text-align: center;">
+                        Generates random studies for testing
                     </div>
                 </div>
             </div>
