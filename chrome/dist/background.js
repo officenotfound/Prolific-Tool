@@ -163,8 +163,70 @@ function handleMessages(message) {
             case 'resetValues':
                 yield setInitialValues();
                 break;
+            case 'start-auto-refresh':
+                yield startAutoRefresh(message.data);
+                break;
+            case 'stop-auto-refresh':
+                stopAutoRefresh();
+                break;
         }
     });
+}
+
+// Auto-refresh interval management
+let autoRefreshInterval = null;
+
+function startAutoRefresh(settings) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // Stop any existing interval
+        stopAutoRefresh();
+
+        const { refreshRate, randomRefresh } = settings;
+
+        function getRefreshInterval() {
+            if (randomRefresh) {
+                // Random interval between 15 and 60 seconds
+                return (15 + Math.random() * 45) * 1000;
+            }
+            return refreshRate * 1000;
+        }
+
+        function scheduleNextRefresh() {
+            const interval = getRefreshInterval();
+            autoRefreshInterval = setTimeout(() => __awaiter(this, void 0, void 0, function* () {
+                // Find all Prolific tabs and reload them
+                const tabs = yield chrome.tabs.query({
+                    url: ["*://prolific.com/*", "*://*.prolific.com/*"]
+                });
+
+                for (const tab of tabs) {
+                    if (tab.id) {
+                        yield chrome.tabs.sendMessage(tab.id, {
+                            target: 'content',
+                            type: 'reload-page'
+                        }).catch(() => {
+                            // Ignore errors if content script not loaded
+                        });
+                    }
+                }
+
+                // Schedule next refresh
+                scheduleNextRefresh();
+            }), interval);
+        }
+
+        // Start the refresh cycle
+        scheduleNextRefresh();
+        console.log('Auto-refresh started with settings:', settings);
+    });
+}
+
+function stopAutoRefresh() {
+    if (autoRefreshInterval) {
+        clearTimeout(autoRefreshInterval);
+        autoRefreshInterval = null;
+        console.log('Auto-refresh stopped');
+    }
 }
 function handleNewStudies(studies) {
     return __awaiter(this, void 0, void 0, function* () {

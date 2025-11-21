@@ -28,6 +28,10 @@ function handleContentMessages(message) {
         case "toggle-auto-refresh":
             handleAutoRefreshToggle(message.data);
             return Promise.resolve();
+        case "reload-page":
+            // Reload the current page
+            window.location.reload();
+            return Promise.resolve();
         default:
             return Promise.resolve();
     }

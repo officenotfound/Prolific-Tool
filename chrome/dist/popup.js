@@ -180,27 +180,35 @@ async function setupSettings() {
                 toggleButton.classList.add('btn-danger');
                 refreshStatus.textContent = currentTranslations['autoRefreshRunning']?.message || 'Auto-refresh is running...';
                 refreshStatus.style.color = '#1e8e3e';
+
+                // Get refresh settings
+                const refreshRateInput = document.getElementById('refreshRate');
+                const randomRefreshInput = document.getElementById('randomRefresh');
+                const refreshRate = refreshRateInput ? parseInt(refreshRateInput.value) || 60 : 60;
+                const randomRefresh = randomRefreshInput ? randomRefreshInput.checked : false;
+
+                // Send start message to background script
+                chrome.runtime.sendMessage({
+                    target: 'background',
+                    type: 'start-auto-refresh',
+                    data: { refreshRate, randomRefresh }
+                });
             } else {
                 toggleButton.textContent = currentTranslations['startAutoRefresh']?.message || '▶️ Start Auto-Refresh';
                 toggleButton.classList.remove('btn-danger');
                 toggleButton.classList.add('btn-primary');
                 refreshStatus.textContent = currentTranslations['autoRefreshStopped']?.message || 'Auto-refresh is stopped';
                 refreshStatus.style.color = '#5f6368';
+
+                // Send stop message to background script
+                chrome.runtime.sendMessage({
+                    target: 'background',
+                    type: 'stop-auto-refresh'
+                });
             }
 
             // Save state
             await chrome.storage.sync.set({ autoRefreshRunning: isRefreshRunning });
-
-            // Send message to content script to start/stop refresh
-            chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-                if (tabs[0] && tabs[0].id) {
-                    chrome.tabs.sendMessage(tabs[0].id, {
-                        target: 'content',
-                        type: 'toggle-auto-refresh',
-                        data: isRefreshRunning
-                    });
-                }
-            });
         });
 
         // Load initial state
