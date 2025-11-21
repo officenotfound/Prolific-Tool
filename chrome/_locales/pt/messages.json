@@ -187,5 +187,185 @@
     },
     "ariaTabSupport": {
         "message": "Informações de suporte e contato"
+    },
+    "currencyDisplay": {
+        "message": "💰 Exibição de moeda"
+    },
+    "currencyDesc": {
+        "message": "Escolha sua moeda preferida para exibir pagamentos de estudos"
+    },
+    "ratesUpdated": {
+        "message": "Taxas atualizadas:"
+    },
+    "loading": {
+        "message": "Carregando..."
+    },
+    "refreshRates": {
+        "message": "🔄 Atualizar taxas"
+    },
+    "refreshIntervalDesc": {
+        "message": "Recomendado: 30-60 segundos para evitar limitação de taxa"
+    },
+    "autoRefreshDesc": {
+        "message": "Deve ser ativado antes de iniciar"
+    },
+    "startAutoRefresh": {
+        "message": "▶️ Iniciar atualização automática"
+    },
+    "stopAutoRefresh": {
+        "message": "⏸️ Parar atualização automática"
+    },
+    "autoRefreshStopped": {
+        "message": "A atualização automática está parada"
+    },
+    "autoRefreshRunning": {
+        "message": "A atualização automática está em execução..."
+    },
+    "autoRefreshActive": {
+        "message": "A atualização automática está ativa."
+    },
+    "autoRefreshDisabled": {
+        "message": "A atualização automática está desativada."
+    },
+    "enableFirst": {
+        "message": "Por favor, ative primeiro a caixa 'Ativar atualização automática'!"
+    },
+    "confirmClearHistory": {
+        "message": "Tem certeza de que deseja limpar seu histórico de estudos?"
+    },
+    "untitledStudy": {
+        "message": "Estudo sem título"
+    },
+    "unknownResearcher": {
+        "message": "Pesquisador desconhecido"
+    },
+    "emailLabel": {
+        "message": "📧 E-mail:"
+    },
+    "twitterLabel": {
+        "message": "🐦 X (Twitter):"
+    },
+    "github": {
+        "message": "GitHub"
+    },
+    "earningsSummary": {
+        "message": "£0.00"
+    },
+    "alert1": {
+        "message": "Alerta 1"
+    },
+    "alert2": {
+        "message": "Alerta 2"
+    },
+    "alert3": {
+        "message": "Alerta 3"
+    },
+    "alert4": {
+        "message": "Alerta 4"
+    },
+    "alert5": {
+        "message": "Alerta 5"
+    },
+    "alert6": {
+        "message": "Alerta 6"
+    },
+    "alert7": {
+        "message": "Alerta 7"
+    },
+    "alert8": {
+        "message": "Alerta 8"
+    },
+    "alert9": {
+        "message": "Alerta 9"
+    },
+    "alert10": {
+        "message": "Alerta 10"
+    },
+    "alert11": {
+        "message": "Alerta 11"
+    },
+    "pay": {
+        "message": "Pagamento:"
+    },
+    "rate": {
+        "message": "Taxa:"
+    },
+    "time": {
+        "message": "Tempo:"
+    },
+    "openStudy": {
+        "message": "Abrir estudo"
+    },
+    "open": {
+        "message": "Abrir"
+    },
+    "lastSeen": {
+        "message": "Visto pela última vez:"
+    },
+    "faq_q1": {
+        "message": "O que é Prolific?"
+    },
+    "faq_a1": {
+        "message": "Prolific é uma plataforma que conecta pesquisadores com participantes para estudos acadêmicos e industriais. Você ganha dinheiro compartilhando suas ideias e experiências em estudos de pesquisa."
+    },
+    "faq_q2": {
+        "message": "Como sou pago?"
+    },
+    "faq_a2": {
+        "message": "Prolific paga via PayPal (através do Hyperwallet). Você pode sacar assim que atingir £6 ou $6. Após seus primeiros 4 saques, os pagamentos geralmente são instantâneos! Os pesquisadores têm até 22 dias para aprovar estudos, mas geralmente é muito mais rápido."
+    },
+    "faq_q3": {
+        "message": "Com que frequência posso sacar dinheiro?"
+    },
+    "faq_a3": {
+        "message": "Você pode sacar uma vez a cada 24 horas (reinicia à meia-noite UTC). NOVO: Se você atualizou recentemente seu endereço do PayPal ou tem menos de 4 saques, há um período de espera de 72 horas entre saques por segurança."
+    },
+    "faq_q4": {
+        "message": "Qual é a taxa horária mínima?"
+    },
+    "faq_a4": {
+        "message": "Prolific exige um mínimo de $8/£6 por hora, mas os pesquisadores são encorajados a pagar pelo menos $12/£9 por hora. Os estudos devem atender a esses mínimos para serem publicados na plataforma."
+    },
+    "faq_q5": {
+        "message": "Por que não vejo estudos?"
+    },
+    "faq_a5": {
+        "message": "A disponibilidade de estudos depende de sua demografia e das necessidades dos pesquisadores. Prolific usa 'limitação de taxa adaptativa' para priorizar participantes que não fizeram estudos recentemente, garantindo pools de participantes frescos para os pesquisadores."
+    },
+    "faq_q6": {
+        "message": "O que é limitação de taxa adaptativa?"
+    },
+    "faq_a6": {
+        "message": "Quando muitos participantes estão ativos, mas poucos estudos estão disponíveis, Prolific prioriza aqueles que passaram menos tempo em estudos recentemente. Quando os estudos preenchem lentamente, os limites são afrouxados. Isso garante distribuição justa e 'ingenuidade' na pesquisa."
+    },
+    "faq_q7": {
+        "message": "O que significa 'Múltiplas submissões permitidas'?"
+    },
+    "faq_a7": {
+        "message": "Você pode fazer o estudo mais de uma vez se houver vagas disponíveis. Isso funciona como trabalhos em lote - complete uma submissão, então você pode reservar outra vaga se disponível."
+    },
+    "faq_q8": {
+        "message": "Por que vejo estudos com 1 vaga que estão cheios?"
+    },
+    "faq_a8": {
+        "message": "Estes são frequentemente estudos onde um participante devolveu sua submissão ou expirou. A vaga fica disponível brevemente e é rapidamente tomada por outro usuário. Esta extensão ajuda você a pegá-los!"
+    },
+    "faq_q9": {
+        "message": "Como evito rejeições?"
+    },
+    "faq_a9": {
+        "message": "Reserve tempo adequado para completar estudos, responda todas as perguntas completamente, preste atenção às instruções e verificações de atenção, dê respostas ponderadas (especialmente para perguntas abertas) e não use assistência de IA a menos que especificamente solicitado."
+    },
+    "faq_q10": {
+        "message": "Meus dados estão seguros?"
+    },
+    "faq_a10": {
+        "message": "Sim! Prolific usa verificação de identidade, requer PayPal apenas para pagamento e mantém sua identidade anônima dos pesquisadores. Eles veem apenas informações demográficas e seu ID Prolific anônimo. Os dados nunca são compartilhados com anunciantes terceiros."
+    },
+    "faq_q11": {
+        "message": "E se eu tiver um problema com um estudo?"
+    },
+    "faq_a11": {
+        "message": "Entre em contato primeiro com o pesquisador através do sistema de mensagens do Prolific. Se não for resolvido em 7 dias, envie uma solicitação de suporte para a equipe Prolific. Eles investigarão e ajudarão a resolver o problema."
     }
 }
