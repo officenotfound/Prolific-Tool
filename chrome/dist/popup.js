@@ -77,7 +77,7 @@ async function setupSettings() {
     // Load saved settings
     const settings = await chrome.storage.sync.get([
         'refreshRate', 'minPayRate', 'audio', 'volume',
-        'showNotification', 'audioActive', 'focusProlific', 'autoRefreshEnabled',
+        'showNotification', 'audioActive', 'focusProlific',
         'minPay', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode', 'randomRefresh'
     ]);
 
@@ -99,7 +99,7 @@ async function setupSettings() {
     setVal('audioActive', settings.audioActive, true);
     setVal('focusProlific', settings.focusProlific, false);
     setVal('darkMode', settings.darkMode, false);
-    setVal('autoRefreshEnabled', settings.autoRefreshEnabled, false);
+
 
     // Study Filters
     setVal('minPay', settings.minPay, 0);
@@ -123,7 +123,7 @@ async function setupSettings() {
         }
     });
 
-    const checkboxes = ['showNotification', 'audioActive', 'focusProlific', 'randomRefresh', 'darkMode', 'autoRefreshEnabled', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode'];
+    const checkboxes = ['showNotification', 'audioActive', 'focusProlific', 'randomRefresh', 'darkMode', 'hideUnderOneDollar', 'useWhitelist', 'extensionDarkMode'];
     checkboxes.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
@@ -137,15 +137,7 @@ async function setupSettings() {
                     if (refreshRateInput) refreshRateInput.disabled = target.checked;
                 }
 
-                // Toggle disable state of refresh inputs if auto-refresh is unchecked
-                if (id === 'autoRefreshEnabled') {
-                    const isEnabled = target.checked;
-                    const refreshRateInput = document.getElementById('refreshRate');
-                    const randomRefreshInput = document.getElementById('randomRefresh');
-                    if (refreshRateInput) refreshRateInput.disabled = !isEnabled || settings.randomRefresh;
-                    if (randomRefreshInput) randomRefreshInput.disabled = !isEnabled;
-                    updateAutoRefreshStatus(isEnabled);
-                }
+
 
                 // Toggle dark mode on Prolific website
                 if (id === 'darkMode') {
@@ -179,13 +171,6 @@ async function setupSettings() {
 
     if (toggleButton && refreshStatus) {
         toggleButton.addEventListener('click', async () => {
-            const enableAutoRefresh = document.getElementById('autoRefreshEnabled').checked;
-
-            if (!enableAutoRefresh) {
-                alert(currentTranslations['enableFirst']?.message || 'Please enable "Enable Auto-Refresh" checkbox first!');
-                return;
-            }
-
             isRefreshRunning = !isRefreshRunning;
 
             // Update button and status
@@ -232,12 +217,10 @@ async function setupSettings() {
     }
 
     // Initial state for refresh rate input
-    const autoRefreshEnabled = settings.autoRefreshEnabled !== undefined ? settings.autoRefreshEnabled : false;
+    // Disable refresh rate input if random is checked
     const refreshRateInput = document.getElementById('refreshRate');
     const randomRefreshInput = document.getElementById('randomRefresh');
-    if (refreshRateInput) refreshRateInput.disabled = !autoRefreshEnabled || settings.randomRefresh;
-    if (randomRefreshInput) randomRefreshInput.disabled = !autoRefreshEnabled;
-    updateAutoRefreshStatus(autoRefreshEnabled);
+    if (refreshRateInput) refreshRateInput.disabled = settings.randomRefresh;
 
     const selectAudio = document.getElementById('selectAudio');
     if (selectAudio) {
