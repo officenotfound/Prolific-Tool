@@ -26,7 +26,7 @@
         <button class="nav-tab active" data-tab="studies" data-i18n="studies">Studies</button>
         <button class="nav-tab" data-tab="history" data-i18n="history">History</button>
         <button class="nav-tab" data-tab="settings" data-i18n="settings">Settings</button>
-        <button class="nav-tab" data-tab="faq" data-i18n="faq">FAQ</button>
+        <button class="nav-tab" data-tab="autorefresh">🔄 Auto-Refresh</button>
         <button class="nav-tab" data-tab="support" data-i18n="support">Support</button>
     </nav>
 
@@ -88,16 +88,6 @@
         <!-- Settings Tab -->
         <div id="settings" class="tab-pane">
             <div class="card">
-                <div class="form-group">
-                    <label class="form-label" data-i18n="refreshInterval">Refresh Interval (seconds)</label>
-                    <input type="number" id="refreshRate" class="form-control" min="15" value="60">
-                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
-                        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
-                            <input type="checkbox" id="randomRefresh"> <span data-i18n="randomize">Randomize (15s -
-                                60s)</span>
-                        </label>
-                    </div>
-                </div>
 
                 <div class="form-group">
                     <label class="form-label" data-i18n="minimumPayRate">Minimum Pay Rate (£/hr)</label>
@@ -322,9 +312,46 @@
         </div>
 
         <!-- FAQ Tab -->
-        <div id="faq" class="tab-pane">
-            <div id="faq-container">
-                <!-- FAQ items will be injected here -->
+        <!-- Auto-Refresh Tab -->
+        <div id="autorefresh" class="tab-pane">
+            <div style="text-align: center; margin-bottom: 24px;">
+                <h2 style="margin: 0 0 8px 0;">🔄 Auto-Refresh</h2>
+                <p style="color: #5f6368; font-size: 14px;">Automatically refresh Prolific pages at set intervals</p>
+            </div>
+
+            <div class="card"
+                style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; margin-bottom: 24px;">
+                <div style="text-align: center;">
+                    <div id="refreshStatus" style="font-size: 16px; margin-bottom: 16px; font-weight: 500;">Auto-refresh
+                        is stopped</div>
+                    <button id="toggleAutoRefresh" class="btn btn-primary"
+                        style="width: 100%; font-size: 18px; padding: 16px; background: white; color: #667eea; border: none;">
+                        ▶️ Start Auto-Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="form-group">
+                    <label class="form-label" data-i18n="refreshInterval">Refresh Interval (seconds)</label>
+                    <input type="number" id="refreshRate" class="form-control" min="15" value="60">
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
+                        <label style="display: flex; align-items: center; gap: 4px; cursor: pointer;">
+                            <input type="checkbox" id="randomRefresh"> <span data-i18n="randomize">Randomize (15s -
+                                60s)</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="background: #f8f9fa;">
+                <h3 style="margin-top: 0; font-size: 16px;">ℹ️ How It Works</h3>
+                <ul style="margin: 0; padding-left: 20px; color: #5f6368; font-size: 13px;">
+                    <li>Works on ANY Prolific.com page</li>
+                    <li>Refreshes ALL open Prolific tabs</li>
+                    <li>Continues even if you close this popup</li>
+                    <li>Click Stop to disable</li>
+                </ul>
             </div>
         </div>
 
@@ -360,8 +387,16 @@
                     </div>
                 </div>
 
-                <a href="https://chromewebstore.google.com/detail/prolific-tool/..." target="_blank"
-                    class="btn btn-secondary" style="display: block; text-align: center;" data-i18n="rateExtension">
+                <div style="margin-top: 32px; padding-top: 32px; border-top: 2px solid #e0e0e0;">
+                    <h3 style="margin-bottom: 16px;">❓ Frequently Asked Questions</h3>
+                    <div id="faq-container">
+                        <!-- FAQ items will be injected here -->
+                    </div>
+                </div>
+
+                <a href="https://chromewebstore.google.com/detail/prolific-tool/hgeljhfekpckiiplhkigfehkdpldcggm"
+                    target="_blank" class="btn btn-secondary" style="display: block; text-align: center;"
+                    data-i18n="rateExtension">
                     ⭐ Rate on Chrome Web Store
                 </a>
 
