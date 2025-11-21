@@ -26,10 +26,17 @@ async function playSound(data) {
         // page. As such, we must insert the string we want to copy to the web page
         // and to select that content in the page before calling `execCommand()`.
         const audioUrl = chrome.runtime.getURL('audio/' + data.audio);
+        console.log('Attempting to play audio:', audioUrl);
         let audio = new Audio(audioUrl);
         audio.volume = data.volume;
+        console.log('Audio object created, volume set to:', data.volume);
         await audio.play();
+        console.log('Audio playback started successfully');
     } catch (error) {
-        console.error(error);
+        console.error('Error playing audio:', error);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Audio file:', data?.audio);
+        console.error('Volume:', data?.volume);
     }
 }
