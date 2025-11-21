@@ -22,11 +22,11 @@
     </div>
 
     <nav class="nav-tabs">
-        <button class="nav-tab active" data-tab="studies">Studies</button>
-        <button class="nav-tab" data-tab="history">History</button>
-        <button class="nav-tab" data-tab="settings">Settings</button>
-        <button class="nav-tab" data-tab="faq">FAQ</button>
-        <button class="nav-tab" data-tab="support">Support</button>
+        <button class="nav-tab active" data-tab="studies" data-i18n="studies">Studies</button>
+        <button class="nav-tab" data-tab="history" data-i18n="history">History</button>
+        <button class="nav-tab" data-tab="settings" data-i18n="settings">Settings</button>
+        <button class="nav-tab" data-tab="faq" data-i18n="faq">FAQ</button>
+        <button class="nav-tab" data-tab="support" data-i18n="support">Support</button>
     </nav>
 
     <div class="content">
@@ -35,7 +35,7 @@
             <div class="stats-container">
                 <div class="stat-item">
                     <span class="stat-value" id="studies-count">0</span>
-                    <span class="stat-label">Available</span>
+                    <span class="stat-label" data-i18n="available">Available</span>
                 </div>
                 <div class="stat-item">
                     <span class="stat-value" id="total-earnings">£0.00</span>
@@ -44,14 +44,15 @@
             </div>
 
             <div class="form-group">
-                <input type="text" id="search-studies" class="form-control" placeholder="Search studies...">
+                <input type="text" id="search-studies" class="form-control" placeholder="Search studies..."
+                    data-i18n-placeholder="searchStudies">
             </div>
 
             <div id="studies-container">
                 <!-- Studies will be injected here -->
                 <div class="empty-state">
                     <div class="empty-icon">📭</div>
-                    <div>No studies available right now.</div>
+                    <div data-i18n="noStudies">No studies available right now.</div>
                     <div style="font-size: 12px; margin-top: 8px;" id="autoRefreshStatus"></div>
                 </div>
             </div>
@@ -62,19 +63,20 @@
             <div class="stats-container">
                 <div class="stat-item">
                     <span class="stat-value" id="history-count">0</span>
-                    <span class="stat-label">Studies Seen</span>
+                    <span class="stat-label" data-i18n="totalSeen">Studies Seen</span>
                 </div>
             </div>
 
             <div class="form-group">
-                <input type="text" id="search-history" class="form-control" placeholder="Search history...">
+                <input type="text" id="search-history" class="form-control" placeholder="Search history..."
+                    data-i18n-placeholder="searchHistory">
             </div>
 
             <div id="history-container">
                 <!-- History items will be injected here -->
                 <div class="empty-state">
                     <div class="empty-icon">📜</div>
-                    <div>No study history yet.</div>
+                    <div data-i18n="noHistory">No study history yet.</div>
                 </div>
             </div>
 
@@ -241,6 +243,14 @@
                 <h3 style="margin-top: 0; margin-bottom: 16px; font-size: 16px;">Study Filters</h3>
 
                 <div class="form-group">
+                    <label class="form-label">Minimum Pay ($)</label>
+                    <input type="number" id="minPay" class="form-control" min="0" step="0.5" value="0">
+                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
+                        Hide studies below this amount (in USD)
+                    </div>
+                </div>
+
+                <div class="form-group">
                     <label class="form-label">Refresh Interval (seconds)</label>
                     <input type="number" id="refreshInterval" class="form-control" min="15" max="300" value="30">
                     <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
@@ -272,14 +282,6 @@
                     <div id="refreshStatus"
                         style="font-size: 11px; color: #5f6368; margin-top: 8px; text-align: center;">
                         Auto-refresh is stopped
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Minimum Pay ($)</label>
-                    <input type="number" id="minPay" class="form-control" min="0" step="0.5" value="0">
-                    <div style="font-size: 11px; color: #5f6368; margin-top: 4px;">
-                        Hide studies below this amount (in USD)
                     </div>
                 </div>
 
@@ -338,9 +340,9 @@
                     </div>
                 </div>
 
-                <a href="https://addons.mozilla.org" target="_blank" class="btn btn-secondary"
-                    style="display: block; text-align: center;">
-                    ⭐ Rate on Firefox Add-ons
+                <a href="https://chromewebstore.google.com/detail/prolific-tool/..." target="_blank"
+                    class="btn btn-secondary" style="display: block; text-align: center;">
+                    ⭐ Rate on Chrome Web Store
                 </a>
 
                 <div style="margin-top: 32px; border-top: 1px solid #dadce0; padding-top: 16px;">

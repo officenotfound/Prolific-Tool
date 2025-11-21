@@ -1,7 +1,7 @@
 // Translation System - Accessible i18n Implementation
 
-let currentTranslations = {};
-let currentLanguage = 'en';
+var currentTranslations = {};
+var currentLanguage = 'en';
 
 // Load translations from language file
 async function loadTranslations(lang) {

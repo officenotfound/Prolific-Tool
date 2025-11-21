@@ -23,185 +23,325 @@
     "support": {
         "message": "Support"
     },
-},
-"_search": {
-    "message": "Search placeholders"
-},
-"searchStudies": {
-    "message": "Search studies..."
-},
-"searchHistory": {
-    "message": "Search history..."
-},
-"_empty": {
-    "message": "Empty state messages"
-},
-"noStudies": {
-    "message": "No studies available right now."
-},
-"checkBack": {
-    "message": "Check back soon or enable auto-refresh!"
-},
-"noHistory": {
-    "message": "No study history yet."
-},
-"historyWillAppear": {
-    "message": "Studies will appear here as you see them."
-},
-"_settings": {
-    "message": "Settings labels"
-},
-"refreshInterval": {
-    "message": "Refresh Interval (seconds)"
-},
-"randomize": {
-    "message": "Randomize (15s - 60s)"
-},
-"enableAutoRefresh": {
-    "message": "Enable Auto Refresh"
-},
-"minimumPayRate": {
-    "message": "Minimum Pay Rate ($/hr)"
-},
-"notificationSound": {
-    "message": "Notification Sound"
-},
-"volume": {
-    "message": "Volume"
-},
-"testAudio": {
-    "message": "Test Audio"
-},
-"showNotifications": {
-    "message": "Show Notifications"
-},
-"playSound": {
-    "message": "Play Sound"
-},
-"focusTabOnNewStudy": {
-    "message": "Focus Tab on New Study"
-},
-"darkModeProlific": {
-    "message": "Dark Mode (Prolific Website)"
-},
-"darkModeProlificDesc": {
-    "message": "Enable dark theme on Prolific website"
-},
-"extensionDarkMode": {
-    "message": "Extension Dark Mode"
-},
-"extensionDarkModeDesc": {
-    "message": "Dark theme for this extension popup"
-},
-"_filters": {
-    "message": "Study filter labels"
-},
-"studyFilters": {
-    "message": "Study Filters"
-},
-"minimumPay": {
-    "message": "Minimum Pay ($)"
-},
-"minimumPayDesc": {
-    "message": "Hide studies below this amount (in USD)"
-},
-"hideUnderOneDollar": {
-    "message": "Hide studies under $1"
-},
-"useWhitelist": {
-    "message": "Use Researcher Whitelist"
-},
-"useWhitelistDesc": {
-    "message": "When enabled, only show studies from whitelisted researchers"
-},
-"_language": {
-    "message": "Language selector"
-},
-"languageTitle": {
-    "message": "🌐 Language"
-},
-"selectLanguage": {
-    "message": "Select your preferred language"
-},
-"english": {
-    "message": "English"
-},
-"german": {
-    "message": "German"
-},
-"spanish": {
-    "message": "Spanish"
-},
-"french": {
-    "message": "French"
-},
-"portuguese": {
-    "message": "Portuguese"
-},
-"_support": {
-    "message": "Support tab content"
-},
-"enjoyingExtension": {
-    "message": "Enjoying the extension?"
-},
-"supportMessage": {
-    "message": "Your support helps me keep this tool free and updated. Every contribution makes a difference!"
-},
-"buyMeCoffee": {
-    "message": "☕ Buy Me a Coffee"
-},
-"needHelp": {
-    "message": "Need Help or Have Feedback?"
-},
-"loveToHear": {
-    "message": "I'd love to hear from you!"
-},
-"email": {
-    "message": "Email"
-},
-"rateExtension": {
-    "message": "⭐ Rate on Chrome Web Store"
-},
-"rateExtensionFirefox": {
-    "message": "⭐ Rate on Firefox Add-ons"
-},
-"_buttons": {
-    "message": "Button labels"
-},
-"save": {
-    "message": "Save"
-},
-"cancel": {
-    "message": "Cancel"
-},
-"markCompleted": {
-    "message": "Mark as Completed"
-},
-"showCompletedOnly": {
-    "message": "Show completed only"
-},
-"_accessibility": {
-    "message": "Accessibility labels"
-},
-"ariaLanguageButton": {
-    "message": "Select {language} language"
-},
-"ariaCurrentLanguage": {
-    "message": "Current language: {language}"
-},
-"ariaTabStudies": {
-    "message": "View available studies"
-},
-"ariaTabHistory": {
-    "message": "View study history"
-},
-"ariaTabSettings": {
-    "message": "Configure extension settings"
-},
-"ariaTabFAQ": {
-    "message": "Frequently asked questions"
-},
-"ariaTabSupport": {
-    "message": "Support and contact information"
-}
+    "_stats": {
+        "message": "Statistics labels"
+    },
+    "available": {
+        "message": "Available"
+    },
+    "potential": {
+        "message": "Potential Earnings"
+    },
+    "totalSeen": {
+        "message": "Total Seen"
+    },
+    "completed": {
+        "message": "Completed"
+    },
+    "_search": {
+        "message": "Search placeholders"
+    },
+    "searchStudies": {
+        "message": "Search studies..."
+    },
+    "searchHistory": {
+        "message": "Search history..."
+    },
+    "_empty": {
+        "message": "Empty state messages"
+    },
+    "noStudies": {
+        "message": "No studies available right now."
+    },
+    "checkBack": {
+        "message": "Check back soon or enable auto-refresh!"
+    },
+    "noHistory": {
+        "message": "No study history yet."
+    },
+    "historyWillAppear": {
+        "message": "Studies will appear here as you see them."
+    },
+    "_settings": {
+        "message": "Settings labels"
+    },
+    "refreshInterval": {
+        "message": "Refresh Interval (seconds)"
+    },
+    "randomize": {
+        "message": "Randomize (15s - 60s)"
+    },
+    "enableAutoRefresh": {
+        "message": "Enable Auto Refresh"
+    },
+    "minimumPayRate": {
+        "message": "Minimum Pay Rate ($/hr)"
+    },
+    "notificationSound": {
+        "message": "Notification Sound"
+    },
+    "volume": {
+        "message": "Volume"
+    },
+    "testAudio": {
+        "message": "Test Audio"
+    },
+    "showNotifications": {
+        "message": "Show Notifications"
+    },
+    "playSound": {
+        "message": "Play Sound"
+    },
+    "focusTabOnNewStudy": {
+        "message": "Focus Tab on New Study"
+    },
+    "darkModeProlific": {
+        "message": "Dark Mode (Prolific Website)"
+    },
+    "darkModeProlificDesc": {
+        "message": "Enable dark theme on Prolific website"
+    },
+    "extensionDarkMode": {
+        "message": "Extension Dark Mode"
+    },
+    "extensionDarkModeDesc": {
+        "message": "Dark theme for this extension popup"
+    },
+    "_filters": {
+        "message": "Study filter labels"
+    },
+    "studyFilters": {
+        "message": "Study Filters"
+    },
+    "minimumPay": {
+        "message": "Minimum Pay ($)"
+    },
+    "minimumPayDesc": {
+        "message": "Hide studies below this amount (in USD)"
+    },
+    "hideUnderOneDollar": {
+        "message": "Hide studies under $1"
+    },
+    "useWhitelist": {
+        "message": "Use Researcher Whitelist"
+    },
+    "useWhitelistDesc": {
+        "message": "When enabled, only show studies from whitelisted researchers"
+    },
+    "_language": {
+        "message": "Language selector"
+    },
+    "languageTitle": {
+        "message": "🌐 Language"
+    },
+    "selectLanguage": {
+        "message": "Select your preferred language"
+    },
+    "english": {
+        "message": "English"
+    },
+    "german": {
+        "message": "German"
+    },
+    "spanish": {
+        "message": "Spanish"
+    },
+    "french": {
+        "message": "French"
+    },
+    "portuguese": {
+        "message": "Portuguese"
+    },
+    "_support": {
+        "message": "Support tab content"
+    },
+    "enjoyingExtension": {
+        "message": "Enjoying the extension?"
+    },
+    "supportMessage": {
+        "message": "Your support helps me keep this tool free and updated. Every contribution makes a difference!"
+    },
+    "buyMeCoffee": {
+        "message": "☕ Buy Me a Coffee"
+    },
+    "needHelp": {
+        "message": "Need Help or Have Feedback?"
+    },
+    "loveToHear": {
+        "message": "I'd love to hear from you!"
+    },
+    "email": {
+        "message": "Email"
+    },
+    "rateExtension": {
+        "message": "⭐ Rate on Chrome Web Store"
+    },
+    "rateExtensionFirefox": {
+        "message": "⭐ Rate on Firefox Add-ons"
+    },
+    "_buttons": {
+        "message": "Button labels"
+    },
+    "save": {
+        "message": "Save"
+    },
+    "cancel": {
+        "message": "Cancel"
+    },
+    "markCompleted": {
+        "message": "Mark as Completed"
+    },
+    "showCompletedOnly": {
+        "message": "Show completed only"
+    },
+    "_accessibility": {
+        "message": "Accessibility labels"
+    },
+    "ariaLanguageButton": {
+        "message": "Select {language} language"
+    },
+    "ariaCurrentLanguage": {
+        "message": "Current language: {language}"
+    },
+    "ariaTabStudies": {
+        "message": "View available studies"
+    },
+    "ariaTabHistory": {
+        "message": "View study history"
+    },
+    "ariaTabSettings": {
+        "message": "Configure extension settings"
+    },
+    "ariaTabFAQ": {
+        "message": "Frequently asked questions"
+    },
+    "ariaTabSupport": {
+        "message": "Support and contact information"
+    },
+    "currencyDisplay": {
+        "message": "💰 Currency Display"
+    },
+    "currencyDesc": {
+        "message": "Choose your preferred currency for displaying study payments"
+    },
+    "ratesUpdated": {
+        "message": "Rates updated:"
+    },
+    "loading": {
+        "message": "Loading..."
+    },
+    "refreshRates": {
+        "message": "🔄 Refresh Rates"
+    },
+    "refreshIntervalDesc": {
+        "message": "Recommended: 30-60 seconds to avoid rate limiting"
+    },
+    "autoRefreshDesc": {
+        "message": "Must be enabled before starting"
+    },
+    "startAutoRefresh": {
+        "message": "▶️ Start Auto-Refresh"
+    },
+    "stopAutoRefresh": {
+        "message": "⏸️ Stop Auto-Refresh"
+    },
+    "autoRefreshStopped": {
+        "message": "Auto-refresh is stopped"
+    },
+    "autoRefreshRunning": {
+        "message": "Auto-refresh is running..."
+    },
+    "autoRefreshActive": {
+        "message": "Auto-refresh is active."
+    },
+    "autoRefreshDisabled": {
+        "message": "Auto-refresh is disabled."
+    },
+    "enableFirst": {
+        "message": "Please enable 'Enable Auto-Refresh' checkbox first!"
+    },
+    "confirmClearHistory": {
+        "message": "Are you sure you want to clear your study history?"
+    },
+    "untitledStudy": {
+        "message": "Untitled Study"
+    },
+    "unknownResearcher": {
+        "message": "Unknown Researcher"
+    },
+    "emailLabel": {
+        "message": "📧 Email:"
+    },
+    "twitterLabel": {
+        "message": "🐦 X (Twitter):"
+    },
+    "github": {
+        "message": "GitHub"
+    },
+    "faq_q1": {
+        "message": "What is Prolific?"
+    },
+    "faq_a1": {
+        "message": "Prolific is a platform that connects researchers with participants for academic and industry studies. You earn money by sharing your insights and experiences in research studies."
+    },
+    "faq_q2": {
+        "message": "How do I get paid?"
+    },
+    "faq_a2": {
+        "message": "Prolific pays via PayPal (through Hyperwallet). You can cash out once you reach £6 or $6. After your first 4 cashouts, payments are typically instant! Researchers have up to 22 days to approve studies, but it's usually much faster."
+    },
+    "faq_q3": {
+        "message": "How often can I withdraw money?"
+    },
+    "faq_a3": {
+        "message": "You can withdraw once every 24 hours (resets at midnight UTC). NEW: If you recently updated your PayPal address or have fewer than 4 cashouts, there's a 72-hour cool-off period between withdrawals for security."
+    },
+    "faq_q4": {
+        "message": "What is the minimum hourly rate?"
+    },
+    "faq_a4": {
+        "message": "Prolific enforces a minimum of $8/£6 per hour, but researchers are encouraged to pay at least $12/£9 per hour. Studies must meet these minimums to be posted on the platform."
+    },
+    "faq_q5": {
+        "message": "Why do I see no studies?"
+    },
+    "faq_a5": {
+        "message": "Study availability depends on your demographics and researcher needs. Prolific uses 'adaptive rate limiting' to prioritize participants who haven't taken studies recently, ensuring fresh participant pools for researchers."
+    },
+    "faq_q6": {
+        "message": "What is adaptive rate limiting?"
+    },
+    "faq_a6": {
+        "message": "When many participants are active but few studies are available, Prolific prioritizes those who've spent less time on studies recently. When studies fill slowly, limits are loosened. This ensures fair distribution and 'naivety' in research."
+    },
+    "faq_q7": {
+        "message": "What does 'Multiple submissions allowed' mean?"
+    },
+    "faq_a7": {
+        "message": "You can take the study more than once if spots are available. This works like batch jobs - complete one submission, then you can reserve another spot if available."
+    },
+    "faq_q8": {
+        "message": "Why do I see studies with 1 spot that are full?"
+    },
+    "faq_a8": {
+        "message": "These are often studies where a participant returned their submission or timed out. The spot becomes available briefly and is quickly taken by another user. This extension helps you catch these!"
+    },
+    "faq_q9": {
+        "message": "How do I avoid rejections?"
+    },
+    "faq_a9": {
+        "message": "Take appropriate time to complete studies, answer all questions thoroughly, pay attention to instructions and attention checks, give thoughtful responses (especially for open-ended questions), and don't use AI assistance unless specifically requested."
+    },
+    "faq_q10": {
+        "message": "Is my data safe?"
+    },
+    "faq_a10": {
+        "message": "Yes! Prolific uses identity verification, requires PayPal only for payment, and keeps your identity anonymous from researchers. They only see demographic info and your anonymous Prolific ID. Data is never shared with third-party advertisers."
+    },
+    "faq_q11": {
+        "message": "What if I have an issue with a study?"
+    },
+    "faq_a11": {
+        "message": "Contact the researcher first through Prolific's messaging system. If not resolved within 7 days, submit a support request to the Prolific team. They'll investigate and help resolve the issue."
+    }
 }

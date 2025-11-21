@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prolific Simulation</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 20px;
+        }
+
+        .list-item {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            list-style: none;
+        }
+
+        .study-tag {
+            background: #eee;
+            padding: 2px 5px;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Prolific Studies Simulation</h1>
+    <p>This page simulates the Prolific studies list structure.</p>
+
+    <!-- Target container expected by content.ts -->
+    <div data-testid="studies-list">
+
+        <!-- Study 1 -->
+        <li class="list-item" data-testid="study-12345-A">
+            <h3 data-testid="title">Simulated Study One</h3>
+            <div data-testid="host">By Dr. Smith</div>
+            <div>
+                <span data-testid="study-tag-reward">£5.00</span>
+                <span data-testid="study-tag-reward-per-hour">£10.00/hr</span>
+                <span data-testid="study-tag-completion-time">30 mins</span>
+            </div>
+        </li>
+
+        <!-- Study 2 -->
+        <li class="list-item" data-testid="study-67890-B">
+            <h3 data-testid="title">Another Test Study</h3>
+            <div data-testid="host">By University of Test</div>
+            <div>
+                <span data-testid="study-tag-reward">£1.50</span>
+                <span data-testid="study-tag-reward-per-hour">£9.00/hr</span>
+                <span data-testid="study-tag-completion-time">10 mins</span>
+            </div>
+        </li>
+
+    </div>
+
+    <script>
+        // Simulate adding a new study after 5 seconds
+        setTimeout(() => {
+            const list = document.querySelector('[data-testid="studies-list"]');
+            const newStudy = document.createElement('li');
+            newStudy.className = 'list-item';
+            newStudy.setAttribute('data-testid', 'study-dynamic-' + Date.now());
+            newStudy.innerHTML = `
+                <h3 data-testid="title">Dynamic New Study</h3>
+                <div data-testid="host">By Auto Generator</div>
+                <div>
+                    <span data-testid="study-tag-reward">£10.00</span>
+                    <span data-testid="study-tag-reward-per-hour">£20.00/hr</span>
+                    <span data-testid="study-tag-completion-time">30 mins</span>
+                </div>
+            `;
+            list.prepend(newStudy);
+            console.log("New study added dynamically!");
+        }, 5000);
+    </script>
+</body>
+
+</html>

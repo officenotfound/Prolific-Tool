@@ -1,3 +1,4 @@
+
 // FAQ Data embedded for simplicity - Updated for 2024/2025
 const FAQ_DATA = [
     {
@@ -68,6 +69,23 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     // Clear badge
     chrome.action.setBadgeText({ text: '' });
+
+    // Listen for changes
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+        if (namespace === 'sync') {
+            if (changes.currency) {
+                updateStats();
+                loadStudies();
+                loadHistory();
+            }
+            if (changes.language) {
+                // Reload data to apply new translations to dynamic content
+                loadStudies();
+                loadHistory();
+                // Static content is handled by i18n.js
+            }
+        }
+    });
 });
 
 function setupTabs() {
@@ -332,7 +350,7 @@ async function loadStudies() {
             container.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">📭</div>
-                    <div>No studies available right now.</div>
+                    <div data-i18n="noStudies">No studies available right now.</div>
                     <div style="font-size: 12px; margin-top: 8px;" id="autoRefreshStatus">${statusText}</div>
                 </div>`;
             return;
@@ -361,7 +379,7 @@ async function loadStudies() {
             const details = document.createElement('div');
             details.className = 'study-details';
 
-            const createDetail = (label, value, style) => {
+            const createDetail = (label, value) => {
                 const item = document.createElement('div');
                 item.className = 'detail-item';
                 const labelSpan = document.createElement('span');
@@ -370,15 +388,14 @@ async function loadStudies() {
                 const valueSpan = document.createElement('span');
                 valueSpan.className = 'detail-value';
                 valueSpan.textContent = value;
-                if (style) valueSpan.style.cssText = style;
                 item.appendChild(labelSpan);
                 item.appendChild(valueSpan);
                 return item;
             };
 
-            details.appendChild(createDetail('Pay:', study.reward || 'N/A'));
-            details.appendChild(createDetail('Rate:', `${study.rewardPerHour || 'N/A'}/hr`));
-            details.appendChild(createDetail('Time:', study.time || 'N/A'));
+            details.appendChild(createDetail(currentTranslations['pay']?.message || 'Pay:', study.reward || 'N/A'));
+            details.appendChild(createDetail(currentTranslations['rate']?.message || 'Rate:', `${study.rewardPerHour || 'N/A'}/hr`));
+            details.appendChild(createDetail(currentTranslations['time']?.message || 'Time:', study.time || 'N/A'));
 
             // Actions
             const actions = document.createElement('div');
@@ -388,7 +405,7 @@ async function loadStudies() {
             link.href = `https://app.prolific.com/studies/${study.id}`;
             link.target = '_blank';
             link.className = 'btn btn-primary';
-            link.textContent = 'Open Study';
+            link.textContent = currentTranslations['openStudy']?.message || 'Open Study';
 
             actions.appendChild(link);
 
@@ -474,7 +491,7 @@ async function loadHistory() {
             container.innerHTML = `
                 <div class="empty-state">
                     <div class="empty-icon">📜</div>
-                    <div>No study history yet.</div>
+                    <div data-i18n="noHistory">No study history yet.</div>
                 </div>`;
             return;
         }
@@ -530,8 +547,8 @@ async function loadHistory() {
                 return item;
             };
 
-            details.appendChild(createDetail('Pay:', study.reward || 'N/A'));
-            details.appendChild(createDetail('Last Seen:', lastSeen, 'font-size: 10px;'));
+            details.appendChild(createDetail(currentTranslations['pay']?.message || 'Pay:', study.reward || 'N/A'));
+            details.appendChild(createDetail(currentTranslations['lastSeen']?.message || 'Last Seen:', lastSeen, 'font-size: 10px;'));
 
             // Actions
             const actions = document.createElement('div');
@@ -543,7 +560,7 @@ async function loadHistory() {
             link.target = '_blank';
             link.className = 'btn btn-primary';
             link.style.flex = '1';
-            link.textContent = 'Open';
+            link.textContent = currentTranslations['open']?.message || 'Open';
             actions.appendChild(link);
 
             if (!study.completed) {
@@ -551,7 +568,7 @@ async function loadHistory() {
                 doneBtn.className = 'btn btn-secondary mark-complete-btn';
                 doneBtn.setAttribute('data-id', study.id);
                 doneBtn.style.cssText = 'flex: 1; padding: 4px;';
-                doneBtn.textContent = 'Done';
+                doneBtn.textContent = currentTranslations['markCompleted']?.message || 'Done';
                 actions.appendChild(doneBtn);
             }
 

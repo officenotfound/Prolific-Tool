@@ -7,8 +7,8 @@ interface Translations {
     };
 }
 
-let currentTranslations: Translations = {};
-let currentLanguage: string = 'en';
+var currentTranslations: Translations = {};
+var currentLanguage: string = 'en';
 
 // Load translations from language file
 async function loadTranslations(lang: string): Promise<Translations> {
