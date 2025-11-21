@@ -89,6 +89,11 @@ async function switchLanguage(lang) {
     currentTranslations = await loadTranslations(lang);
     applyTranslations(currentTranslations);
 
+    // Rebuild FAQ with new language
+    if (typeof setupFAQ === 'function') {
+        setupFAQ();
+    }
+
     // Update button states
     updateLanguageButtons(lang);
 
